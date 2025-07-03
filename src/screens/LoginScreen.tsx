@@ -4,19 +4,21 @@ import { QRScanner } from '@/components/QRScanner/QRScanner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { QrCode, Users, Mail, Lock, ArrowLeft, UserPlus, AlertCircle } from 'lucide-react'
+import { QrCode, Users, Mail, Lock, ArrowLeft, UserPlus, AlertCircle, GraduationCap, User } from 'lucide-react'
 
 interface LoginScreenProps {
   onStudentLogin: (qrData: string) => void
+  onStudentSignup: (name: string, grade: number, classId: string) => void
   onStaffLogin: (email: string, password: string) => void
   isLoading?: boolean
   authError?: string | null
 }
 
-type LoginMode = 'select' | 'student' | 'staff' | 'staff-signup'
+type LoginMode = 'select' | 'student-qr' | 'student-signup' | 'student-signin' | 'staff' | 'staff-signup'
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({
   onStudentLogin,
+  onStudentSignup,
   onStaffLogin,
   isLoading = false,
   authError = null
@@ -26,6 +28,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [name, setName] = useState('')
+  const [grade, setGrade] = useState('')
+  const [classId, setClassId] = useState('')
 
   const handleStaffSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,7 +50,21 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
     }
   }
 
-  if (mode === 'student') {
+  const handleStudentSignup = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (name && grade && classId) {
+      onStudentSignup(name, parseInt(grade), classId)
+    }
+  }
+
+  const handleStudentSignin = (e: React.FormEvent) => {
+    e.preventDefault()
+    // For demo purposes, create a mock QR code
+    const mockQRData = `student_qr_${Date.now()}`
+    onStudentLogin(mockQRData)
+  }
+
+  if (mode === 'student-qr') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
         <div className="w-full max-w-2xl">
@@ -67,6 +85,196 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             isLoading={isLoading}
           />
         </div>
+      </div>
+    )
+  }
+
+  if (mode === 'student-signup') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <UserPlus className="w-5 h-5" />
+                Student Sign Up
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMode('select')}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {authError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-red-700">{authError}</p>
+              </div>
+            )}
+            
+            <form onSubmit={handleStudentSignup} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="student-name" className="text-sm font-medium">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="student-name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your full name"
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="student-grade" className="text-sm font-medium">
+                  Grade
+                </label>
+                <div className="relative">
+                  <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="student-grade"
+                    type="number"
+                    min="1"
+                    max="12"
+                    value={grade}
+                    onChange={(e) => setGrade(e.target.value)}
+                    placeholder="Enter your grade (1-12)"
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="student-class" className="text-sm font-medium">
+                  Class ID
+                </label>
+                <div className="relative">
+                  <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="student-class"
+                    type="text"
+                    value={classId}
+                    onChange={(e) => setClassId(e.target.value)}
+                    placeholder="Enter your class ID"
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!name || !grade || !classId || isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Creating Account...
+                  </div>
+                ) : (
+                  'Create Student Account'
+                )}
+              </Button>
+
+              <div className="text-center">
+                <Button 
+                  type="button"
+                  variant="link" 
+                  className="text-sm"
+                  onClick={() => setMode('student-signin')}
+                >
+                  Already have an account? Sign in
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (mode === 'student-signin') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5" />
+                Student Sign In
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMode('select')}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {authError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-red-700">{authError}</p>
+              </div>
+            )}
+            
+            <form onSubmit={handleStudentSignin} className="space-y-4">
+              <div className="text-center space-y-4">
+                <p className="text-gray-600">
+                  For demo purposes, click below to sign in as a demo student.
+                </p>
+                
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Signing In...
+                    </div>
+                  ) : (
+                    'Sign In as Demo Student'
+                  )}
+                </Button>
+              </div>
+
+              <div className="text-center space-y-2">
+                <Button 
+                  type="button"
+                  variant="link" 
+                  className="text-sm"
+                  onClick={() => setMode('student-signup')}
+                >
+                  Don't have an account? Sign up
+                </Button>
+                <Button 
+                  type="button"
+                  variant="link" 
+                  className="text-sm"
+                  onClick={() => setMode('student-qr')}
+                >
+                  Have a QR code? Scan it
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -326,14 +534,35 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             transition={{ delay: 0.1 }}
           >
             <Button
-              onClick={() => setMode('student')}
+              onClick={() => setMode('student-qr')}
               size="lg"
-              className="w-full h-16 text-lg"
+              className="w-full h-16 text-lg mb-2"
             >
               <QrCode className="w-6 h-6 mr-3" />
-              Scan My Code
-              <span className="block text-sm opacity-80 ml-3">Student Login</span>
+              <div className="text-left">
+                <div>Scan My QR Code</div>
+                <div className="text-sm opacity-80">Student with badge</div>
+              </div>
             </Button>
+            
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setMode('student-signup')}
+                variant="outline"
+                size="sm"
+                className="flex-1"
+              >
+                Student Sign Up
+              </Button>
+              <Button
+                onClick={() => setMode('student-signin')}
+                variant="outline"
+                size="sm"
+                className="flex-1"
+              >
+                Student Sign In
+              </Button>
+            </div>
           </motion.div>
 
           <motion.div
@@ -348,14 +577,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               className="w-full h-16 text-lg"
             >
               <Users className="w-6 h-6 mr-3" />
-              Log in as Staff
-              <span className="block text-sm opacity-80 ml-3">Teacher/Admin</span>
+              <div className="text-left">
+                <div>Log in as Staff</div>
+                <div className="text-sm opacity-80">Teacher/Admin</div>
+              </div>
             </Button>
           </motion.div>
         </div>
 
         <p className="text-xs text-gray-500">
-          Students: Use your school-issued QR code badge<br/>
+          Students: Use your QR code badge or create an account<br/>
           Staff: Use your school credentials or SSO
         </p>
       </div>

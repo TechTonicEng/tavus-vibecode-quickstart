@@ -2,13 +2,12 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Home, BookOpen, BarChart3, Settings, User, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useAtom } from 'jotai'
-import { logoutAtom } from '@/store/auth'
 import { Student, Educator } from '@/types'
 
 interface SidebarProps {
   currentView: string
   onViewChange: (view: string) => void
+  onLogout: () => void
   userType: 'student' | 'staff' | null
   currentUser: Student | Educator | null
 }
@@ -31,16 +30,11 @@ const staffNavigation = [
 export const Sidebar: React.FC<SidebarProps> = ({ 
   currentView, 
   onViewChange, 
+  onLogout,
   userType, 
   currentUser 
 }) => {
-  const [, logout] = useAtom(logoutAtom)
-  
   const navigation = userType === 'staff' ? staffNavigation : studentNavigation
-
-  const handleLogout = () => {
-    logout()
-  }
 
   const getUserDisplayInfo = () => {
     if (!currentUser) return { name: 'User', subtitle: '' }
@@ -115,7 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={handleLogout}
+          onClick={onLogout}
           className="w-full justify-start gap-2 text-gray-600 hover:text-gray-900"
         >
           <LogOut className="w-4 h-4" />

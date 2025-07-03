@@ -12,7 +12,8 @@ import {
   currentEducatorAtom,
   loginStudentAtom,
   loginStaffAtom,
-  initializeAuthAtom
+  initializeAuthAtom,
+  logoutAtom
 } from '@/store/auth'
 import { conversationAtom } from '@/store/conversation'
 import { selectedMoodAtom, selectedSkillAtom, currentSessionAtom } from '@/store/session'
@@ -30,6 +31,7 @@ function App() {
   const [, loginStudent] = useAtom(loginStudentAtom)
   const [, loginStaff] = useAtom(loginStaffAtom)
   const [, initializeAuth] = useAtom(initializeAuthAtom)
+  const [, logout] = useAtom(logoutAtom)
   const [conversation, setConversation] = useAtom(conversationAtom)
   const [selectedMood] = useAtom(selectedMoodAtom)
   const [selectedSkill] = useAtom(selectedSkillAtom)
@@ -60,6 +62,35 @@ function App() {
     }
   }
 
+  const handleStudentSignup = async (name: string, grade: number, classId: string) => {
+    setIsAuthLoading(true)
+    setAuthError(null)
+    try {
+      // For demo purposes, create a mock student
+      const mockStudent = {
+        id: `student_${Date.now()}`,
+        name,
+        grade,
+        class_id: classId,
+        created_at: new Date().toISOString()
+      }
+      
+      const token = `student_${mockStudent.id}_${Date.now()}`
+      const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString()
+      
+      loginStudent({
+        student: mockStudent,
+        token,
+        expiresAt
+      })
+    } catch (error) {
+      console.error('Student signup failed:', error)
+      setAuthError('Failed to create account. Please try again.')
+    } finally {
+      setIsAuthLoading(false)
+    }
+  }
+
   const handleStaffLogin = async (email: string, password: string) => {
     setIsAuthLoading(true)
     setAuthError(null)
@@ -80,6 +111,18 @@ function App() {
     } finally {
       setIsAuthLoading(false)
     }
+  }
+
+  const handleLogout = () => {
+    logout()
+    setCurrentView('home')
+    // Reset session state
+    setCurrentSession(null)
+    setConversation({
+      conversation_id: null,
+      conversation_url: null,
+      status: 'idle'
+    })
   }
 
   const handleStartSession = async () => {
@@ -200,6 +243,7 @@ function App() {
       <DailyProvider>
         <LoginScreen
           onStudentLogin={handleStudentLogin}
+          onStudentSignup={handleStudentSignup}
           onStaffLogin={handleStaffLogin}
           isLoading={isAuthLoading}
           authError={authError}
@@ -214,6 +258,7 @@ function App() {
         <Sidebar 
           currentView={currentView} 
           onViewChange={setCurrentView}
+          onLogout={handleLogout}
           userType={authState.userType}
           currentUser={currentStudent || currentEducator}
         />
