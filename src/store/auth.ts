@@ -15,19 +15,20 @@ export const authStateAtom = atom<AuthState>({
   expiresAt: null
 })
 
-// Simple atoms without complex setters to avoid issues
+// Create atoms with explicit initial values
 export const currentStudentAtom = atom<Student | null>(null)
 export const currentEducatorAtom = atom<Educator | null>(null)
 
 // Derived atom for authentication status
 export const isAuthenticatedAtom = atom((get) => get(authStateAtom).isAuthenticated)
 
-// Action atom for logout
+// Action atom for logout that properly clears everything
 export const logoutAtom = atom(
   null,
   (get, set) => {
-    console.log('logoutAtom: Logging out user')
+    console.log('logoutAtom: Clearing all auth state')
     
+    // Clear auth state
     set(authStateAtom, {
       isAuthenticated: false,
       userType: null,
@@ -35,6 +36,7 @@ export const logoutAtom = atom(
       expiresAt: null
     })
     
+    // Clear user atoms
     set(currentStudentAtom, null)
     set(currentEducatorAtom, null)
     
@@ -44,6 +46,15 @@ export const logoutAtom = atom(
     localStorage.removeItem('tess_user_type')
     localStorage.removeItem('tess_expires_at')
     
-    console.log('logoutAtom: Logout complete')
+    console.log('logoutAtom: All state cleared')
+  }
+)
+
+// Debug atom to track currentStudent changes
+export const debugCurrentStudentAtom = atom(
+  (get) => {
+    const student = get(currentStudentAtom)
+    console.log('debugCurrentStudentAtom: currentStudent value:', student)
+    return student
   }
 )

@@ -26,13 +26,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     console.log('HomeScreen: Component mounted/updated')
     console.log('HomeScreen: selectedMood:', selectedMood)
     console.log('HomeScreen: selectedSkill:', selectedSkill)
-    console.log('HomeScreen: currentStudent:', currentStudent)
+    console.log('HomeScreen: currentStudent from atom:', currentStudent)
     console.log('HomeScreen: step:', step)
   }, [selectedMood, selectedSkill, currentStudent, step])
 
   // Additional debug logging specifically for currentStudent
   useEffect(() => {
-    console.log('HomeScreen: currentStudent atom value:', currentStudent)
+    console.log('HomeScreen: currentStudent atom value changed:', currentStudent)
     if (currentStudent) {
       console.log('HomeScreen: currentStudent details:', {
         id: currentStudent.id,
@@ -120,6 +120,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
               <p><strong>Debug Info:</strong></p>
               <p>Current Student: {currentStudent ? `${currentStudent.name} (ID: ${currentStudent.id})` : 'null'}</p>
               <p>Waiting for authentication to complete...</p>
+              <p>Step: {step}</p>
             </div>
           )}
         </div>

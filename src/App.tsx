@@ -36,7 +36,7 @@ function App() {
 
   // Debug logging for currentStudent changes
   useEffect(() => {
-    console.log('App: currentStudent changed:', currentStudent)
+    console.log('App: currentStudent atom changed:', currentStudent)
   }, [currentStudent])
 
   // Initialize auth state on app load
@@ -73,7 +73,7 @@ function App() {
               expiresAt
             })
 
-            // Then set user data directly
+            // Then set user data
             if (userType === 'student') {
               console.log('App: Setting currentStudent from localStorage:', parsedUserData)
               setCurrentStudent(parsedUserData)
@@ -109,7 +109,7 @@ function App() {
       const authResponse = await authenticateStudentQR(qrData)
       console.log('App: QR auth response:', authResponse)
       
-      // Set auth state and user data directly
+      // Set auth state first
       setAuthState({
         isAuthenticated: true,
         userType: 'student',
@@ -117,6 +117,8 @@ function App() {
         expiresAt: authResponse.expires_at
       })
       
+      // Set currentStudent immediately after auth state
+      console.log('App: Setting currentStudent after QR login:', authResponse.student)
       setCurrentStudent(authResponse.student)
       
       // Store in localStorage
@@ -125,7 +127,7 @@ function App() {
       localStorage.setItem('tess_user_type', 'student')
       localStorage.setItem('tess_expires_at', authResponse.expires_at)
       
-      console.log('App: QR login complete, currentStudent set to:', authResponse.student)
+      console.log('App: QR login complete')
       
     } catch (error) {
       console.error('App: Student login failed:', error)
@@ -141,7 +143,6 @@ function App() {
     try {
       console.log('App: Creating student account:', { name, grade, classId })
       
-      // Create a student object
       const newStudent = {
         id: `student_${Date.now()}`,
         name,
@@ -155,7 +156,7 @@ function App() {
       
       console.log('App: Created student:', newStudent)
       
-      // Set auth state and user data directly
+      // Set auth state first
       setAuthState({
         isAuthenticated: true,
         userType: 'student',
@@ -163,6 +164,8 @@ function App() {
         expiresAt
       })
       
+      // Set currentStudent immediately after auth state
+      console.log('App: Setting currentStudent after signup:', newStudent)
       setCurrentStudent(newStudent)
       
       // Store in localStorage
@@ -171,7 +174,7 @@ function App() {
       localStorage.setItem('tess_user_type', 'student')
       localStorage.setItem('tess_expires_at', expiresAt)
       
-      console.log('App: Student signup complete, currentStudent set to:', newStudent)
+      console.log('App: Student signup complete')
       
     } catch (error) {
       console.error('App: Student signup failed:', error)
@@ -187,7 +190,6 @@ function App() {
     try {
       console.log('App: Demo student signin')
       
-      // Create a demo student
       const demoStudent = {
         id: 'demo_student_123',
         name: 'Demo Student',
@@ -201,7 +203,7 @@ function App() {
       
       console.log('App: Created demo student:', demoStudent)
       
-      // Set auth state and user data directly
+      // Set auth state first
       setAuthState({
         isAuthenticated: true,
         userType: 'student',
@@ -209,6 +211,8 @@ function App() {
         expiresAt
       })
       
+      // Set currentStudent immediately after auth state
+      console.log('App: Setting currentStudent after demo signin:', demoStudent)
       setCurrentStudent(demoStudent)
       
       // Store in localStorage
@@ -217,7 +221,7 @@ function App() {
       localStorage.setItem('tess_user_type', 'student')
       localStorage.setItem('tess_expires_at', expiresAt)
       
-      console.log('App: Demo signin complete, currentStudent set to:', demoStudent)
+      console.log('App: Demo signin complete')
       
     } catch (error) {
       console.error('App: Demo signin failed:', error)
@@ -419,7 +423,7 @@ function App() {
     )
   }
 
-  // Show login screen if not authenticated (THIS IS THE CORRECT FLOW)
+  // Show login screen if not authenticated
   if (!authState.isAuthenticated) {
     return (
       <DailyProvider>
