@@ -21,14 +21,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
   const [currentStudent] = useAtom(currentStudentAtom)
   const [step, setStep] = useState<'greeting' | 'mood' | 'skill' | 'ready'>('greeting')
 
-  // Debug logging
+  // Debug logging with more detail
   useEffect(() => {
-    console.log('HomeScreen state:', {
-      selectedMood,
-      selectedSkill,
-      currentStudent,
-      step
-    })
+    console.log('HomeScreen: Component mounted/updated')
+    console.log('HomeScreen: selectedMood:', selectedMood)
+    console.log('HomeScreen: selectedSkill:', selectedSkill)
+    console.log('HomeScreen: currentStudent:', currentStudent)
+    console.log('HomeScreen: step:', step)
   }, [selectedMood, selectedSkill, currentStudent, step])
 
   // Additional debug logging specifically for currentStudent
@@ -45,6 +44,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
       console.log('HomeScreen: currentStudent is null/undefined')
     }
   }, [currentStudent])
+
+  // Wait for currentStudent to be available before proceeding
+  useEffect(() => {
+    if (currentStudent && step === 'greeting') {
+      console.log('HomeScreen: currentStudent available, moving to mood selection')
+      setStep('mood')
+    }
+  }, [currentStudent, step])
 
   const getGreeting = () => {
     const hour = new Date().getHours()
@@ -99,6 +106,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     onStartSession()
   }
 
+  // Show loading state while waiting for currentStudent
+  if (!currentStudent) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-gray-600">Loading your profile...</p>
+          
+          {/* Debug info in development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-4 bg-gray-100 rounded-lg text-sm text-left max-w-md">
+              <p><strong>Debug Info:</strong></p>
+              <p>Current Student: {currentStudent ? `${currentStudent.name} (ID: ${currentStudent.id})` : 'null'}</p>
+              <p>Waiting for authentication to complete...</p>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="h-full overflow-y-auto">
       <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -127,6 +155,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
               <p>Selected Mood: {selectedMood ? selectedMood.label : 'none'}</p>
               <p>Selected Skill: {selectedSkill ? selectedSkill.title : 'none'}</p>
               <p>Can Start Session: {canStartSession ? 'Yes' : 'No'}</p>
+              <p>Current Step: {step}</p>
             </div>
           )}
         </motion.div>

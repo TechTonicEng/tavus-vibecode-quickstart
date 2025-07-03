@@ -34,6 +34,7 @@ function App() {
   const [currentSession, setCurrentSession] = useAtom(currentSessionAtom)
   const [isAuthLoading, setIsAuthLoading] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   // Debug logging for currentStudent changes
   useEffect(() => {
@@ -44,12 +45,18 @@ function App() {
   useEffect(() => {
     const initializeAuth = () => {
       try {
+        console.log('App: Starting auth initialization...')
         const token = localStorage.getItem('tess_auth_token')
         const userData = localStorage.getItem('tess_user_data')
         const userType = localStorage.getItem('tess_user_type') as 'student' | 'staff' | null
         const expiresAt = localStorage.getItem('tess_expires_at')
 
-        console.log('Initializing auth with:', { token: !!token, userData: !!userData, userType, expiresAt })
+        console.log('App: Auth data from localStorage:', { 
+          hasToken: !!token, 
+          hasUserData: !!userData, 
+          userType, 
+          expiresAt 
+        })
 
         if (token && userData && userType && expiresAt) {
           // Check if token is expired
@@ -58,7 +65,7 @@ function App() {
           
           if (now < expiry) {
             const parsedUserData = JSON.parse(userData)
-            console.log('Restoring auth state:', { userType, parsedUserData })
+            console.log('App: Restoring auth state:', { userType, parsedUserData })
             
             // Set auth state first
             setAuthState({
@@ -68,25 +75,28 @@ function App() {
               expiresAt
             })
 
-            // Then set user data
+            // Then set user data directly (not through action atom to avoid localStorage write)
             if (userType === 'student') {
-              console.log('Setting currentStudent from localStorage:', parsedUserData)
+              console.log('App: Setting currentStudent from localStorage:', parsedUserData)
               setCurrentStudent(parsedUserData)
             } else {
-              console.log('Setting currentEducator from localStorage:', parsedUserData)
+              console.log('App: Setting currentEducator from localStorage:', parsedUserData)
               setCurrentEducator(parsedUserData)
             }
           } else {
             // Token expired, clear everything
-            console.log('Token expired, clearing auth')
+            console.log('App: Token expired, clearing auth')
             logout()
           }
         } else {
-          console.log('No valid auth data found in localStorage')
+          console.log('App: No valid auth data found in localStorage')
         }
       } catch (error) {
-        console.error('Failed to initialize auth state:', error)
+        console.error('App: Failed to initialize auth state:', error)
         logout()
+      } finally {
+        setIsInitialized(true)
+        console.log('App: Auth initialization complete')
       }
     }
 
@@ -97,9 +107,9 @@ function App() {
     setIsAuthLoading(true)
     setAuthError(null)
     try {
-      console.log('Attempting QR login with:', qrData)
+      console.log('App: Attempting QR login with:', qrData)
       const authResponse = await authenticateStudentQR(qrData)
-      console.log('QR auth response:', authResponse)
+      console.log('App: QR auth response:', authResponse)
       
       // Use the login action atom
       loginStudent({
@@ -109,7 +119,7 @@ function App() {
       })
       
     } catch (error) {
-      console.error('Student login failed:', error)
+      console.error('App: Student login failed:', error)
       setAuthError('Failed to authenticate QR code. Please try again.')
     } finally {
       setIsAuthLoading(false)
@@ -120,7 +130,7 @@ function App() {
     setIsAuthLoading(true)
     setAuthError(null)
     try {
-      console.log('Creating student account:', { name, grade, classId })
+      console.log('App: Creating student account:', { name, grade, classId })
       
       // Create a student object
       const newStudent = {
@@ -134,7 +144,7 @@ function App() {
       const token = `student_${newStudent.id}_${Date.now()}`
       const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString()
       
-      console.log('Created student:', newStudent)
+      console.log('App: Created student:', newStudent)
       
       // Use the login action atom
       loginStudent({
@@ -144,7 +154,7 @@ function App() {
       })
       
     } catch (error) {
-      console.error('Student signup failed:', error)
+      console.error('App: Student signup failed:', error)
       setAuthError('Failed to create account. Please try again.')
     } finally {
       setIsAuthLoading(false)
@@ -155,7 +165,7 @@ function App() {
     setIsAuthLoading(true)
     setAuthError(null)
     try {
-      console.log('Demo student signin')
+      console.log('App: Demo student signin')
       
       // Create a demo student
       const demoStudent = {
@@ -169,7 +179,7 @@ function App() {
       const token = `student_demo_${Date.now()}`
       const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString()
       
-      console.log('Created demo student:', demoStudent)
+      console.log('App: Created demo student:', demoStudent)
       
       // Use the login action atom
       loginStudent({
@@ -179,7 +189,7 @@ function App() {
       })
       
     } catch (error) {
-      console.error('Demo signin failed:', error)
+      console.error('App: Demo signin failed:', error)
       setAuthError('Demo signin failed. Please try again.')
     } finally {
       setIsAuthLoading(false)
@@ -190,9 +200,9 @@ function App() {
     setIsAuthLoading(true)
     setAuthError(null)
     try {
-      console.log('Attempting staff login with:', email)
+      console.log('App: Attempting staff login with:', email)
       const authResponse = await authenticateStaff(email, password)
-      console.log('Staff auth response:', authResponse)
+      console.log('App: Staff auth response:', authResponse)
       
       // Set auth state
       setAuthState({
@@ -204,7 +214,7 @@ function App() {
       
       // Set current educator
       setCurrentEducator(authResponse.educator)
-      console.log('Set currentEducator after staff login:', authResponse.educator)
+      console.log('App: Set currentEducator after staff login:', authResponse.educator)
       
       // Store in localStorage
       localStorage.setItem('tess_auth_token', authResponse.token)
@@ -213,7 +223,7 @@ function App() {
       localStorage.setItem('tess_expires_at', authResponse.expires_at)
       
     } catch (error) {
-      console.error('Staff login failed:', error)
+      console.error('App: Staff login failed:', error)
       if (error.message.includes('Invalid credentials')) {
         setAuthError('Invalid credentials. For demo purposes, use: demo@school.edu / demo123')
       } else {
@@ -225,7 +235,7 @@ function App() {
   }
 
   const handleLogout = () => {
-    console.log('Logging out user')
+    console.log('App: Logging out user')
     logout()
     setCurrentView('home')
     // Reset session state
@@ -238,7 +248,7 @@ function App() {
   }
 
   const handleStartSession = async () => {
-    console.log('Starting session with:', { 
+    console.log('App: Starting session with:', { 
       selectedMood, 
       selectedSkill, 
       currentStudent,
@@ -246,19 +256,19 @@ function App() {
     })
 
     if (!selectedMood || !selectedSkill) {
-      console.error('Missing required data for session - mood or skill not selected')
+      console.error('App: Missing required data for session - mood or skill not selected')
       setAuthError('Please select both a mood and a skill before starting.')
       return
     }
 
     if (!currentStudent) {
-      console.error('No authenticated student found')
+      console.error('App: No authenticated student found')
       setAuthError('Please log in to start a session.')
       return
     }
 
     try {
-      console.log('Starting session with:', { selectedMood, selectedSkill, student: currentStudent })
+      console.log('App: Starting session with:', { selectedMood, selectedSkill, student: currentStudent })
 
       // Create session record first
       const sessionData = {
@@ -273,7 +283,7 @@ function App() {
 
       const session = await createSession(sessionData)
       setCurrentSession(session)
-      console.log('Session created:', session)
+      console.log('App: Session created:', session)
 
       // Create Tavus conversation using Edge Function
       const conversationResponse = await createConversation(
@@ -282,7 +292,7 @@ function App() {
         selectedSkill.id
       )
 
-      console.log('Conversation response:', conversationResponse)
+      console.log('App: Conversation response:', conversationResponse)
 
       setConversation({
         conversation_id: conversationResponse.conversation_id,
@@ -292,7 +302,7 @@ function App() {
 
       setCurrentView('session')
     } catch (error) {
-      console.error('Failed to start session:', error)
+      console.error('App: Failed to start session:', error)
       setAuthError('Failed to start session. Please try again.')
     }
   }
@@ -362,6 +372,21 @@ function App() {
   console.log('App render - Auth State:', authState)
   console.log('App render - Current Student:', currentStudent)
   console.log('App render - Current Educator:', currentEducator)
+  console.log('App render - Is Initialized:', isInitialized)
+
+  // Wait for initialization to complete before rendering
+  if (!isInitialized) {
+    return (
+      <DailyProvider>
+        <div className="h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      </DailyProvider>
+    )
+  }
 
   // Show login screen if not authenticated
   if (!authState.isAuthenticated) {
