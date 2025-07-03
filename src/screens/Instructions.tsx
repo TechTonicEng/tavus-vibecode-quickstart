@@ -1,4 +1,4 @@
-import { createConversation } from "@/api";
+import { createTavusConversationDirect } from "@/api";
 import {
   DialogWrapper,
   AnimatedTextBlockWrapper,
@@ -32,7 +32,7 @@ const useCreateConversationMutation = () => {
       if (!token) {
         throw new Error("Token is required");
       }
-      const conversation = await createConversation(token);
+      const conversation = await createTavusConversationDirect(token);
       setConversation(conversation);
       setScreenState({ currentScreen: "conversation" });
     } catch (error) {

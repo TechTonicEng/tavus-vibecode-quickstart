@@ -2,7 +2,7 @@ import { IConversation } from "@/types";
 import { settingsAtom } from "@/store/settings";
 import { getDefaultStore } from "jotai";
 
-export const createConversation = async (
+export const createTavusConversationDirect = async (
   token: string,
 ): Promise<IConversation> => {
   // Get settings from Jotai store
