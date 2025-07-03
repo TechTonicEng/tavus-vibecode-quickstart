@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useAtom } from 'jotai'
 import { MoodPicker } from '@/components/MoodPicker/MoodPicker'
@@ -21,6 +21,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
   const [currentStudent] = useAtom(currentStudentAtom)
   const [step, setStep] = useState<'greeting' | 'mood' | 'skill' | 'ready'>('greeting')
 
+  // Debug logging
+  useEffect(() => {
+    console.log('HomeScreen state:', {
+      selectedMood,
+      selectedSkill,
+      currentStudent,
+      step
+    })
+  }, [selectedMood, selectedSkill, currentStudent, step])
+
   const getGreeting = () => {
     const hour = new Date().getHours()
     if (hour < 12) return 'Good Morning'
@@ -38,7 +48,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     setStep('ready')
   }
 
-  const canStartSession = selectedMood && selectedSkill && currentStudent
+  // More lenient check - only require mood and skill, not currentStudent
+  const canStartSession = selectedMood && selectedSkill
 
   return (
     <div className="h-full overflow-y-auto">

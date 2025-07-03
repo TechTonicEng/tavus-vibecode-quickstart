@@ -29,72 +29,70 @@ function App() {
       try {
         const mockStudentId = '550e8400-e29b-41d4-a716-446655440000'
         
-        // Check if student already exists
-        const { data: existingStudent, error: fetchError } = await supabase
-          .from('students')
-          .select('*')
-          .eq('id', mockStudentId)
-          .maybeSingle()
+        console.log('Initializing mock student with ID:', mockStudentId)
 
-        if (fetchError) {
-          console.error('Error checking for existing student:', fetchError)
-          // If there's an error, create a fallback student object
-          const fallbackStudent = {
-            id: mockStudentId,
-            name: 'Alex',
-            grade: 3,
-            class_id: 'class-456',
-            created_at: new Date().toISOString()
-          }
-          setCurrentStudent(fallbackStudent)
-          setIsAuthenticated(true)
-          return
+        // Create a fallback student object first
+        const fallbackStudent = {
+          id: mockStudentId,
+          name: 'Alex',
+          grade: 3,
+          class_id: 'class-456',
+          created_at: new Date().toISOString()
         }
 
-        let student = existingStudent
-
-        if (!student) {
-          // Student doesn't exist, create them
-          const mockStudentData = {
-            id: mockStudentId,
-            name: 'Alex',
-            grade: 3,
-            class_id: 'class-456'
-          }
-
-          const { data: newStudent, error: insertError } = await supabase
-            .from('students')
-            .insert(mockStudentData)
-            .select()
-            .single()
-
-          if (insertError) {
-            console.error('Error creating mock student:', insertError)
-            // If insert fails, use the mock data directly
-            student = {
-              ...mockStudentData,
-              created_at: new Date().toISOString()
-            }
-          } else {
-            student = newStudent
-          }
-        }
-
-        setCurrentStudent(student)
+        // Set the fallback student immediately so the app can work
+        setCurrentStudent(fallbackStudent)
         setIsAuthenticated(true)
-        console.log('Mock student initialized:', student)
+        console.log('Fallback student set:', fallbackStudent)
+
+        // Try to check/create in database, but don't block the app if it fails
+        try {
+          const { data: existingStudent, error: fetchError } = await supabase
+            .from('students')
+            .select('*')
+            .eq('id', mockStudentId)
+            .maybeSingle()
+
+          if (!fetchError && existingStudent) {
+            // Update with real data from database
+            setCurrentStudent(existingStudent)
+            console.log('Updated with database student:', existingStudent)
+          } else if (!fetchError && !existingStudent) {
+            // Try to create in database
+            const { data: newStudent, error: insertError } = await supabase
+              .from('students')
+              .insert({
+                id: mockStudentId,
+                name: 'Alex',
+                grade: 3,
+                class_id: 'class-456'
+              })
+              .select()
+              .single()
+
+            if (!insertError && newStudent) {
+              setCurrentStudent(newStudent)
+              console.log('Created and set new student:', newStudent)
+            }
+          }
+        } catch (dbError) {
+          console.warn('Database operation failed, using fallback student:', dbError)
+          // Fallback student is already set, so app continues to work
+        }
+
       } catch (error) {
         console.error('Failed to initialize mock student:', error)
-        // Create a fallback student even if everything fails
-        const fallbackStudent = {
+        // Even if everything fails, create a basic student object
+        const emergencyStudent = {
           id: '550e8400-e29b-41d4-a716-446655440000',
           name: 'Alex',
           grade: 3,
           class_id: 'class-456',
           created_at: new Date().toISOString()
         }
-        setCurrentStudent(fallbackStudent)
+        setCurrentStudent(emergencyStudent)
         setIsAuthenticated(true)
+        console.log('Emergency student set:', emergencyStudent)
       }
     }
 
@@ -102,17 +100,26 @@ function App() {
   }, [setCurrentStudent, setIsAuthenticated])
 
   const handleStartSession = async () => {
-    if (!selectedMood || !selectedSkill || !currentStudent) {
-      console.error('Missing required data for session')
+    if (!selectedMood || !selectedSkill) {
+      console.error('Missing required data for session - mood or skill not selected')
       return
     }
 
+    // Use fallback student if currentStudent is not available
+    const studentToUse = currentStudent || {
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      name: 'Alex',
+      grade: 3,
+      class_id: 'class-456',
+      created_at: new Date().toISOString()
+    }
+
     try {
-      console.log('Starting session with:', { selectedMood, selectedSkill, currentStudent })
+      console.log('Starting session with:', { selectedMood, selectedSkill, student: studentToUse })
 
       // Create session record first
       const sessionData = {
-        student_id: currentStudent.id,
+        student_id: studentToUse.id,
         mood_emoji: selectedMood.emoji,
         mood_score: 0, // Will be updated during session
         sel_skill: selectedSkill.id,
@@ -127,7 +134,7 @@ function App() {
 
       // Create Tavus conversation using Edge Function
       const conversationResponse = await createConversation(
-        currentStudent.id,
+        studentToUse.id,
         selectedMood.emoji,
         selectedSkill.id
       )
