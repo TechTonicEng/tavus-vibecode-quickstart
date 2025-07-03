@@ -10,7 +10,8 @@ import {
   authStateAtom, 
   currentStudentAtom, 
   currentEducatorAtom,
-  logoutAtom
+  logoutAtom,
+  loginStudentAtom
 } from '@/store/auth'
 import { conversationAtom } from '@/store/conversation'
 import { selectedMoodAtom, selectedSkillAtom, currentSessionAtom } from '@/store/session'
@@ -26,6 +27,7 @@ function App() {
   const [currentStudent, setCurrentStudent] = useAtom(currentStudentAtom)
   const [currentEducator, setCurrentEducator] = useAtom(currentEducatorAtom)
   const [, logout] = useAtom(logoutAtom)
+  const [, loginStudent] = useAtom(loginStudentAtom)
   const [conversation, setConversation] = useAtom(conversationAtom)
   const [selectedMood] = useAtom(selectedMoodAtom)
   const [selectedSkill] = useAtom(selectedSkillAtom)
@@ -99,26 +101,12 @@ function App() {
       const authResponse = await authenticateStudentQR(qrData)
       console.log('QR auth response:', authResponse)
       
-      // Set auth state first
-      setAuthState({
-        isAuthenticated: true,
-        userType: 'student',
+      // Use the login action atom
+      loginStudent({
+        student: authResponse.student,
         token: authResponse.token,
         expiresAt: authResponse.expires_at
       })
-      
-      // Set current student immediately after auth state
-      console.log('Setting currentStudent after QR login:', authResponse.student)
-      setCurrentStudent(authResponse.student)
-      
-      // Store in localStorage
-      localStorage.setItem('tess_auth_token', authResponse.token)
-      localStorage.setItem('tess_user_data', JSON.stringify(authResponse.student))
-      localStorage.setItem('tess_user_type', 'student')
-      localStorage.setItem('tess_expires_at', authResponse.expires_at)
-      
-      // Verify the student was set
-      console.log('Verification - currentStudent after setting:', authResponse.student)
       
     } catch (error) {
       console.error('Student login failed:', error)
@@ -148,26 +136,12 @@ function App() {
       
       console.log('Created student:', newStudent)
       
-      // Set auth state first
-      setAuthState({
-        isAuthenticated: true,
-        userType: 'student',
+      // Use the login action atom
+      loginStudent({
+        student: newStudent,
         token,
         expiresAt
       })
-      
-      // Set current student immediately
-      console.log('Setting currentStudent after signup:', newStudent)
-      setCurrentStudent(newStudent)
-      
-      // Store in localStorage
-      localStorage.setItem('tess_auth_token', token)
-      localStorage.setItem('tess_user_data', JSON.stringify(newStudent))
-      localStorage.setItem('tess_user_type', 'student')
-      localStorage.setItem('tess_expires_at', expiresAt)
-      
-      // Verify the student was set
-      console.log('Verification - currentStudent after signup:', newStudent)
       
     } catch (error) {
       console.error('Student signup failed:', error)
@@ -197,26 +171,12 @@ function App() {
       
       console.log('Created demo student:', demoStudent)
       
-      // Set auth state first
-      setAuthState({
-        isAuthenticated: true,
-        userType: 'student',
+      // Use the login action atom
+      loginStudent({
+        student: demoStudent,
         token,
         expiresAt
       })
-      
-      // Set current student immediately
-      console.log('Setting currentStudent after demo signin:', demoStudent)
-      setCurrentStudent(demoStudent)
-      
-      // Store in localStorage
-      localStorage.setItem('tess_auth_token', token)
-      localStorage.setItem('tess_user_data', JSON.stringify(demoStudent))
-      localStorage.setItem('tess_user_type', 'student')
-      localStorage.setItem('tess_expires_at', expiresAt)
-      
-      // Verify the student was set
-      console.log('Verification - currentStudent after demo signin:', demoStudent)
       
     } catch (error) {
       console.error('Demo signin failed:', error)

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useAtom } from 'jotai'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDaily, useLocalSessionId, useParticipantIds, useDailyEvent } from '@daily-co/daily-react'
@@ -56,29 +56,29 @@ export const SessionView: React.FC<SessionViewProps> = ({ onSessionEnd }) => {
     }
   }, [conversation?.conversation_url, daily])
 
-  // Memoized event handlers
-  const handleParticipantJoined = useCallback((event) => {
+  // Memoized event handlers to prevent re-render loops
+  const handleParticipantJoined = useCallback((event: any) => {
     console.log('Participant joined:', event.participant)
     if (event.participant.user_id !== localSessionId) {
       setIsConnecting(false)
     }
   }, [localSessionId])
 
-  const handleParticipantLeft = useCallback((event) => {
+  const handleParticipantLeft = useCallback((event: any) => {
     console.log('Participant left:', event.participant)
   }, [])
 
-  const handleLeftMeeting = useCallback((event) => {
+  const handleLeftMeeting = useCallback((event: any) => {
     console.log('Left meeting:', event)
     onSessionEnd()
   }, [onSessionEnd])
 
-  const handleJoinedMeeting = useCallback((event) => {
+  const handleJoinedMeeting = useCallback((event: any) => {
     console.log('Joined meeting:', event)
     setIsConnecting(false)
   }, [])
 
-  const handleError = useCallback((event) => {
+  const handleError = useCallback((event: any) => {
     console.error('Daily error:', event)
     setIsConnecting(false)
   }, [])
@@ -96,24 +96,24 @@ export const SessionView: React.FC<SessionViewProps> = ({ onSessionEnd }) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  const handleMicToggle = () => {
+  const handleMicToggle = useCallback(() => {
     if (daily) {
       daily.setLocalAudio(!isMuted)
       setIsMuted(!isMuted)
     }
-  }
+  }, [daily, isMuted])
 
-  const handleSpeakerToggle = () => {
+  const handleSpeakerToggle = useCallback(() => {
     // In a real implementation, this would control speaker output
     setIsSpeakerOn(!isSpeakerOn)
-  }
+  }, [isSpeakerOn])
 
-  const handleEndSession = () => {
+  const handleEndSession = useCallback(() => {
     if (daily) {
       daily.leave()
     }
     onSessionEnd()
-  }
+  }, [daily, onSessionEnd])
 
   return (
     <div className="h-full flex flex-col bg-gradient-to-br from-blue-50 to-purple-50">

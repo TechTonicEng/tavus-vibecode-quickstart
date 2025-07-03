@@ -15,8 +15,22 @@ export const authStateAtom = atom<AuthState>({
   expiresAt: null
 })
 
-export const currentStudentAtom = atom<Student | null>(null)
-export const currentEducatorAtom = atom<Educator | null>(null)
+// Create atoms with explicit initial values and debug logging
+export const currentStudentAtom = atom<Student | null>(
+  null,
+  (get, set, newValue: Student | null) => {
+    console.log('currentStudentAtom: Setting value to:', newValue)
+    set(currentStudentAtom, newValue)
+  }
+)
+
+export const currentEducatorAtom = atom<Educator | null>(
+  null,
+  (get, set, newValue: Educator | null) => {
+    console.log('currentEducatorAtom: Setting value to:', newValue)
+    set(currentEducatorAtom, newValue)
+  }
+)
 
 // Derived atom for authentication status
 export const isAuthenticatedAtom = atom((get) => get(authStateAtom).isAuthenticated)
@@ -25,12 +39,15 @@ export const isAuthenticatedAtom = atom((get) => get(authStateAtom).isAuthentica
 export const loginStudentAtom = atom(
   null,
   (get, set, { student, token, expiresAt }: { student: Student; token: string; expiresAt: string }) => {
+    console.log('loginStudentAtom: Logging in student:', student)
+    
     set(authStateAtom, {
       isAuthenticated: true,
       userType: 'student',
       token,
       expiresAt
     })
+    
     set(currentStudentAtom, student)
     
     // Store in localStorage for persistence
@@ -38,18 +55,23 @@ export const loginStudentAtom = atom(
     localStorage.setItem('tess_user_data', JSON.stringify(student))
     localStorage.setItem('tess_user_type', 'student')
     localStorage.setItem('tess_expires_at', expiresAt)
+    
+    console.log('loginStudentAtom: Student login complete')
   }
 )
 
 export const loginStaffAtom = atom(
   null,
   (get, set, { educator, token, expiresAt }: { educator: Educator; token: string; expiresAt: string }) => {
+    console.log('loginStaffAtom: Logging in educator:', educator)
+    
     set(authStateAtom, {
       isAuthenticated: true,
       userType: 'staff',
       token,
       expiresAt
     })
+    
     set(currentEducatorAtom, educator)
     
     // Store in localStorage for persistence
@@ -57,18 +79,23 @@ export const loginStaffAtom = atom(
     localStorage.setItem('tess_user_data', JSON.stringify(educator))
     localStorage.setItem('tess_user_type', 'staff')
     localStorage.setItem('tess_expires_at', expiresAt)
+    
+    console.log('loginStaffAtom: Staff login complete')
   }
 )
 
 export const logoutAtom = atom(
   null,
   (get, set) => {
+    console.log('logoutAtom: Logging out user')
+    
     set(authStateAtom, {
       isAuthenticated: false,
       userType: null,
       token: null,
       expiresAt: null
     })
+    
     set(currentStudentAtom, null)
     set(currentEducatorAtom, null)
     
@@ -77,6 +104,8 @@ export const logoutAtom = atom(
     localStorage.removeItem('tess_user_data')
     localStorage.removeItem('tess_user_type')
     localStorage.removeItem('tess_expires_at')
+    
+    console.log('logoutAtom: Logout complete')
   }
 )
 
@@ -85,6 +114,8 @@ export const initializeAuthAtom = atom(
   null,
   (get, set) => {
     try {
+      console.log('initializeAuthAtom: Initializing auth from localStorage')
+      
       const token = localStorage.getItem('tess_auth_token')
       const userData = localStorage.getItem('tess_user_data')
       const userType = localStorage.getItem('tess_user_type') as 'student' | 'staff' | null
@@ -98,6 +129,8 @@ export const initializeAuthAtom = atom(
         if (now < expiry) {
           const parsedUserData = JSON.parse(userData)
           
+          console.log('initializeAuthAtom: Restoring auth state for:', userType, parsedUserData)
+          
           set(authStateAtom, {
             isAuthenticated: true,
             userType,
@@ -110,13 +143,18 @@ export const initializeAuthAtom = atom(
           } else {
             set(currentEducatorAtom, parsedUserData)
           }
+          
+          console.log('initializeAuthAtom: Auth state restored successfully')
         } else {
           // Token expired, clear everything
+          console.log('initializeAuthAtom: Token expired, clearing auth')
           set(logoutAtom)
         }
+      } else {
+        console.log('initializeAuthAtom: No valid auth data found')
       }
     } catch (error) {
-      console.error('Failed to initialize auth state:', error)
+      console.error('initializeAuthAtom: Failed to initialize auth state:', error)
       set(logoutAtom)
     }
   }
