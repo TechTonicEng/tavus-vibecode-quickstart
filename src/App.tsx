@@ -10,8 +10,7 @@ import {
   authStateAtom, 
   currentStudentAtom, 
   currentEducatorAtom,
-  logoutAtom,
-  loginStudentAtom
+  logoutAtom
 } from '@/store/auth'
 import { conversationAtom } from '@/store/conversation'
 import { selectedMoodAtom, selectedSkillAtom, currentSessionAtom } from '@/store/session'
@@ -27,7 +26,6 @@ function App() {
   const [currentStudent, setCurrentStudent] = useAtom(currentStudentAtom)
   const [currentEducator, setCurrentEducator] = useAtom(currentEducatorAtom)
   const [, logout] = useAtom(logoutAtom)
-  const [, loginStudent] = useAtom(loginStudentAtom)
   const [conversation, setConversation] = useAtom(conversationAtom)
   const [selectedMood] = useAtom(selectedMoodAtom)
   const [selectedSkill] = useAtom(selectedSkillAtom)
@@ -43,7 +41,7 @@ function App() {
 
   // Initialize auth state on app load
   useEffect(() => {
-    const initializeAuth = () => {
+    const initializeAuth = async () => {
       try {
         console.log('App: Starting auth initialization...')
         const token = localStorage.getItem('tess_auth_token')
@@ -75,7 +73,7 @@ function App() {
               expiresAt
             })
 
-            // Then set user data directly (not through action atom to avoid localStorage write)
+            // Then set user data directly
             if (userType === 'student') {
               console.log('App: Setting currentStudent from localStorage:', parsedUserData)
               setCurrentStudent(parsedUserData)
@@ -111,12 +109,23 @@ function App() {
       const authResponse = await authenticateStudentQR(qrData)
       console.log('App: QR auth response:', authResponse)
       
-      // Use the login action atom
-      loginStudent({
-        student: authResponse.student,
+      // Set auth state and user data directly
+      setAuthState({
+        isAuthenticated: true,
+        userType: 'student',
         token: authResponse.token,
         expiresAt: authResponse.expires_at
       })
+      
+      setCurrentStudent(authResponse.student)
+      
+      // Store in localStorage
+      localStorage.setItem('tess_auth_token', authResponse.token)
+      localStorage.setItem('tess_user_data', JSON.stringify(authResponse.student))
+      localStorage.setItem('tess_user_type', 'student')
+      localStorage.setItem('tess_expires_at', authResponse.expires_at)
+      
+      console.log('App: QR login complete, currentStudent set to:', authResponse.student)
       
     } catch (error) {
       console.error('App: Student login failed:', error)
@@ -146,12 +155,23 @@ function App() {
       
       console.log('App: Created student:', newStudent)
       
-      // Use the login action atom
-      loginStudent({
-        student: newStudent,
+      // Set auth state and user data directly
+      setAuthState({
+        isAuthenticated: true,
+        userType: 'student',
         token,
         expiresAt
       })
+      
+      setCurrentStudent(newStudent)
+      
+      // Store in localStorage
+      localStorage.setItem('tess_auth_token', token)
+      localStorage.setItem('tess_user_data', JSON.stringify(newStudent))
+      localStorage.setItem('tess_user_type', 'student')
+      localStorage.setItem('tess_expires_at', expiresAt)
+      
+      console.log('App: Student signup complete, currentStudent set to:', newStudent)
       
     } catch (error) {
       console.error('App: Student signup failed:', error)
@@ -181,12 +201,23 @@ function App() {
       
       console.log('App: Created demo student:', demoStudent)
       
-      // Use the login action atom
-      loginStudent({
-        student: demoStudent,
+      // Set auth state and user data directly
+      setAuthState({
+        isAuthenticated: true,
+        userType: 'student',
         token,
         expiresAt
       })
+      
+      setCurrentStudent(demoStudent)
+      
+      // Store in localStorage
+      localStorage.setItem('tess_auth_token', token)
+      localStorage.setItem('tess_user_data', JSON.stringify(demoStudent))
+      localStorage.setItem('tess_user_type', 'student')
+      localStorage.setItem('tess_expires_at', expiresAt)
+      
+      console.log('App: Demo signin complete, currentStudent set to:', demoStudent)
       
     } catch (error) {
       console.error('App: Demo signin failed:', error)
@@ -388,7 +419,7 @@ function App() {
     )
   }
 
-  // Show login screen if not authenticated
+  // Show login screen if not authenticated (THIS IS THE CORRECT FLOW)
   if (!authState.isAuthenticated) {
     return (
       <DailyProvider>

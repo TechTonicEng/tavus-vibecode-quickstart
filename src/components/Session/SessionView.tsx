@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useAtom } from 'jotai'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useDaily, useLocalSessionId, useParticipantIds, useDailyEvent } from '@daily-co/daily-react'
 import { currentSessionAtom, selectedMoodAtom, selectedSkillAtom } from '@/store/session'
 import { conversationAtom } from '@/store/conversation'
