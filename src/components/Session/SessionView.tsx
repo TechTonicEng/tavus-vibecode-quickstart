@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { motion, AnimatePresence } from 'framer-motion'
-import { DailyProvider, useDaily, useLocalSessionId, useParticipantIds } from '@daily-co/daily-react'
+import { useDaily, useLocalSessionId, useParticipantIds, useDailyEvent } from '@daily-co/daily-react'
 import { currentSessionAtom, selectedMoodAtom, selectedSkillAtom } from '@/store/session'
 import { conversationAtom } from '@/store/conversation'
 import { TessAvatar } from '@/components/Avatar/TessAvatar'
@@ -21,6 +21,7 @@ export const SessionView: React.FC<SessionViewProps> = ({ onSessionEnd }) => {
   const [isMuted, setIsMuted] = useState(false)
   const [isSpeakerOn, setIsSpeakerOn] = useState(true)
   const [sessionTime, setSessionTime] = useState(0)
+  const [isConnecting, setIsConnecting] = useState(true)
 
   const daily = useDaily()
   const localSessionId = useLocalSessionId()
@@ -38,13 +39,44 @@ export const SessionView: React.FC<SessionViewProps> = ({ onSessionEnd }) => {
   // Join the conversation when URL is available
   useEffect(() => {
     if (conversation?.conversation_url && daily) {
+      console.log('Joining Daily call with URL:', conversation.conversation_url)
+      setIsConnecting(true)
+      
       daily.join({
         url: conversation.conversation_url,
         startVideoOff: true,
         startAudioOff: false
+      }).then(() => {
+        console.log('Successfully joined Daily call')
+        setIsConnecting(false)
+      }).catch((error) => {
+        console.error('Failed to join Daily call:', error)
+        setIsConnecting(false)
       })
     }
   }, [conversation?.conversation_url, daily])
+
+  // Handle participant events
+  useDailyEvent('participant-joined', (event) => {
+    console.log('Participant joined:', event.participant)
+    if (event.participant.user_id !== localSessionId) {
+      setIsConnecting(false)
+    }
+  })
+
+  useDailyEvent('participant-left', (event) => {
+    console.log('Participant left:', event.participant)
+  })
+
+  useDailyEvent('joined-meeting', (event) => {
+    console.log('Joined meeting:', event)
+    setIsConnecting(false)
+  })
+
+  useDailyEvent('error', (event) => {
+    console.error('Daily error:', event)
+    setIsConnecting(false)
+  })
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -78,9 +110,12 @@ export const SessionView: React.FC<SessionViewProps> = ({ onSessionEnd }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              <div className={cn(
+                "w-3 h-3 rounded-full",
+                remoteParticipantIds.length > 0 ? "bg-green-500 animate-pulse" : "bg-yellow-500"
+              )}></div>
               <span className="text-sm font-medium text-gray-700">
-                Session with Tess
+                {isConnecting ? 'Connecting to Tess...' : 'Session with Tess'}
               </span>
             </div>
             <div className="text-sm text-gray-500">
@@ -106,8 +141,20 @@ export const SessionView: React.FC<SessionViewProps> = ({ onSessionEnd }) => {
           <TessAvatar
             sessionId={remoteParticipantIds[0]}
             className="w-full h-full max-w-2xl mx-auto"
-            isLoading={!remoteParticipantIds.length}
+            isLoading={isConnecting || remoteParticipantIds.length === 0}
           />
+          
+          {/* Debug info */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-4 bg-black/10 rounded-lg text-sm">
+              <p>Debug Info:</p>
+              <p>Conversation URL: {conversation?.conversation_url ? 'Set' : 'Not set'}</p>
+              <p>Local Session ID: {localSessionId || 'None'}</p>
+              <p>Remote Participants: {remoteParticipantIds.length}</p>
+              <p>Is Connecting: {isConnecting.toString()}</p>
+              <p>Daily Instance: {daily ? 'Available' : 'Not available'}</p>
+            </div>
+          )}
         </div>
 
         {/* Skill Instructions Sidebar */}

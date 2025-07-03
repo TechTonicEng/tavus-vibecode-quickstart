@@ -84,7 +84,9 @@ function App() {
     }
 
     try {
-      // Create session record
+      console.log('Starting session with:', { selectedMood, selectedSkill, currentStudent })
+
+      // Create session record first
       const sessionData = {
         student_id: currentStudent.id,
         mood_emoji: selectedMood.emoji,
@@ -97,6 +99,7 @@ function App() {
 
       const session = await createSession(sessionData)
       setCurrentSession(session)
+      console.log('Session created:', session)
 
       // Create Tavus conversation using Edge Function
       const conversationResponse = await createConversation(
@@ -104,6 +107,8 @@ function App() {
         selectedMood.emoji,
         selectedSkill.id
       )
+
+      console.log('Conversation response:', conversationResponse)
 
       setConversation({
         conversation_id: conversationResponse.conversation_id,
@@ -143,11 +148,7 @@ function App() {
       case 'home':
         return <HomeScreen onStartSession={handleStartSession} />
       case 'session':
-        return (
-          <DailyProvider>
-            <SessionView onSessionEnd={handleSessionEnd} />
-          </DailyProvider>
-        )
+        return <SessionView onSessionEnd={handleSessionEnd} />
       case 'complete':
         return <SessionComplete onReturnHome={handleReturnHome} />
       case 'sessions':
@@ -195,12 +196,14 @@ function App() {
   }
 
   return (
-    <div className="h-screen flex bg-gray-50">
-      <Sidebar currentView={currentView} onViewChange={setCurrentView} />
-      <main className="flex-1 overflow-hidden">
-        {renderMainContent()}
-      </main>
-    </div>
+    <DailyProvider>
+      <div className="h-screen flex bg-gray-50">
+        <Sidebar currentView={currentView} onViewChange={setCurrentView} />
+        <main className="flex-1 overflow-hidden">
+          {renderMainContent()}
+        </main>
+      </div>
+    </DailyProvider>
   )
 }
 
