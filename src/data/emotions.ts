@@ -7,7 +7,7 @@ export const emotions: MoodOption[] = [
     value: 'happy',
     color: '#FFD93D',
     description: 'Feeling joyful and cheerful',
-    image: '/src/assets/Moods/happy.png'
+    image: '/src/assets/Moods/Happy-Rabbit.png'
   },
   {
     emoji: '😢',
@@ -15,7 +15,7 @@ export const emotions: MoodOption[] = [
     value: 'sad',
     color: '#6BB6FF',
     description: 'Feeling down or upset',
-    image: '/src/assets/Moods/sad.png'
+    image: '/src/assets/Moods/Sad-Puppy.png'
   },
   {
     emoji: '😨',
@@ -23,7 +23,7 @@ export const emotions: MoodOption[] = [
     value: 'scared',
     color: '#FF6B6B',
     description: 'Feeling frightened or afraid',
-    image: '/src/assets/Moods/scared.png'
+    image: '/src/assets/Moods/Scared-Mouse.png'
   },
   {
     emoji: '😟',
@@ -31,7 +31,7 @@ export const emotions: MoodOption[] = [
     value: 'worried',
     color: '#4ECDC4',
     description: 'Feeling anxious or concerned',
-    image: '/src/assets/Moods/worried.png'
+    image: '/src/assets/Moods/Worried-Squirrel.png'
   },
   {
     emoji: '😠',
@@ -39,7 +39,7 @@ export const emotions: MoodOption[] = [
     value: 'angry',
     color: '#FF8E53',
     description: 'Feeling mad or frustrated',
-    image: '/src/assets/Moods/angry.png'
+    image: '/src/assets/Moods/Angry-Moose.png'
   },
   {
     emoji: '😤',
@@ -47,7 +47,7 @@ export const emotions: MoodOption[] = [
     value: 'frustrated',
     color: '#FF6B9D',
     description: 'Feeling annoyed or impatient',
-    image: '/src/assets/Moods/frustrated.png'
+    image: '/src/assets/Moods/Frustrated-Fox.png'
   },
   {
     emoji: '😰',
@@ -55,7 +55,7 @@ export const emotions: MoodOption[] = [
     value: 'nervous',
     color: '#C7CEEA',
     description: 'Feeling jittery or uneasy',
-    image: '/src/assets/Moods/nervous.png'
+    image: '/src/assets/Moods/Overwhelmed-Lemur.png'
   },
   {
     emoji: '😳',
@@ -63,7 +63,7 @@ export const emotions: MoodOption[] = [
     value: 'shy',
     color: '#FFB347',
     description: 'Feeling timid or bashful',
-    image: '/src/assets/Moods/shy.png'
+    image: '/src/assets/Moods/Shy-Turtle.png'
   },
   {
     emoji: '🤔',
@@ -71,7 +71,7 @@ export const emotions: MoodOption[] = [
     value: 'curious',
     color: '#98D8C8',
     description: 'Feeling interested and wondering',
-    image: '/src/assets/Moods/curious.png'
+    image: '/src/assets/Moods/Curious-Giraffe.png'
   },
   {
     emoji: '😞',
@@ -79,7 +79,7 @@ export const emotions: MoodOption[] = [
     value: 'depressed',
     color: '#95A5A6',
     description: 'Feeling very sad for a long time',
-    image: '/src/assets/Moods/depressed.png'
+    image: '/src/assets/Moods/Depressed-Penguin.png'
   },
   {
     emoji: '😑',
@@ -87,7 +87,7 @@ export const emotions: MoodOption[] = [
     value: 'bored',
     color: '#BDC3C7',
     description: 'Feeling uninterested or restless',
-    image: '/src/assets/Moods/bored.png'
+    image: '/src/assets/Moods/Bored-Panda.png'
   },
   {
     emoji: '😌',
@@ -95,7 +95,7 @@ export const emotions: MoodOption[] = [
     value: 'proud',
     color: '#F39C12',
     description: 'Feeling accomplished and confident',
-    image: '/src/assets/Moods/proud.png'
+    image: '/src/assets/Moods/Proud-Lion Cub.png'
   },
   {
     emoji: '🙂',
@@ -103,7 +103,7 @@ export const emotions: MoodOption[] = [
     value: 'hopeful',
     color: '#2ECC71',
     description: 'Feeling optimistic about the future',
-    image: '/src/assets/Moods/hopeful.png'
+    image: '/src/assets/Moods/Hopeful-Fawn.png'
   },
   {
     emoji: '😒',
@@ -111,7 +111,7 @@ export const emotions: MoodOption[] = [
     value: 'irritated',
     color: '#E74C3C',
     description: 'Feeling slightly angry or annoyed',
-    image: '/src/assets/Moods/irritated.png'
+    image: '/src/assets/Moods/Okay.Fine-Koala.png'
   },
   {
     emoji: '😲',
@@ -119,6 +119,6 @@ export const emotions: MoodOption[] = [
     value: 'shocked',
     color: '#9B59B6',
     description: 'Feeling very surprised',
-    image: '/src/assets/Moods/shocked.png'
+    image: '/src/assets/Moods/Overwhelmed-Lemur.png'
   }
 ]

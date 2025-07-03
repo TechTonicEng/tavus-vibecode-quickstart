@@ -4,32 +4,6 @@ import { emotions } from '@/data/emotions'
 import { MoodOption } from '@/types'
 import { cn } from '@/lib/utils'
 
-// Import all mood images
-import happyImg from '@/assets/Moods/image.png'
-import sadImg from '@/assets/Moods/image copy.png'
-import scaredImg from '@/assets/Moods/image copy copy.png'
-
-// Create a mapping of mood values to imported images
-const moodImages: Record<string, string> = {
-  happy: happyImg,
-  sad: sadImg,
-  scared: scaredImg,
-  // For now, we'll use the first three images for all moods
-  // You can add more specific mappings as needed
-  worried: sadImg,
-  angry: scaredImg,
-  frustrated: scaredImg,
-  nervous: sadImg,
-  shy: happyImg,
-  curious: happyImg,
-  depressed: sadImg,
-  bored: sadImg,
-  proud: happyImg,
-  hopeful: happyImg,
-  irritated: scaredImg,
-  shocked: scaredImg
-}
-
 interface MoodPickerProps {
   selectedMood: MoodOption | null
   onMoodSelect: (mood: MoodOption) => void
@@ -73,10 +47,10 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
           >
             <div className="text-center space-y-2">
               <div className="relative">
-                {moodImages[emotion.value] ? (
+                {emotion.image ? (
                   <>
                     <img 
-                      src={moodImages[emotion.value]} 
+                      src={emotion.image} 
                       alt={emotion.label}
                       className="w-16 h-16 mx-auto object-contain"
                       onError={(e) => {
