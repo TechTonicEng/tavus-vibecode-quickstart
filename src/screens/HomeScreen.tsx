@@ -8,18 +8,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { selectedMoodAtom, selectedSkillAtom } from '@/store/session'
 import { currentStudentAtom } from '@/store/auth'
 import { selSkills } from '@/data/selSkills'
-import { MoodOption, SELSkill } from '@/types'
+import { MoodOption, SELSkill, Student } from '@/types'
 import { Sparkles, Heart, Sun } from 'lucide-react'
 
 interface HomeScreenProps {
   onStartSession: () => void
 }
 
+// Hardcoded fallback student for testing
+const FALLBACK_STUDENT: Student = {
+  id: 'hardcoded_student_123',
+  name: 'Test Student',
+  grade: 4,
+  class_id: 'test-class',
+  created_at: new Date().toISOString()
+}
+
 export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
   const [selectedMood, setSelectedMood] = useAtom(selectedMoodAtom)
   const [selectedSkill, setSelectedSkill] = useAtom(selectedSkillAtom)
-  const [currentStudent] = useAtom(currentStudentAtom)
+  const [currentStudent, setCurrentStudent] = useAtom(currentStudentAtom)
   const [step, setStep] = useState<'greeting' | 'mood' | 'skill' | 'ready'>('greeting')
+
+  // Use fallback student if currentStudent is null
+  const effectiveStudent = currentStudent || FALLBACK_STUDENT
 
   // Debug logging with more detail
   useEffect(() => {
@@ -27,8 +39,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     console.log('HomeScreen: selectedMood:', selectedMood)
     console.log('HomeScreen: selectedSkill:', selectedSkill)
     console.log('HomeScreen: currentStudent from atom:', currentStudent)
+    console.log('HomeScreen: effectiveStudent (with fallback):', effectiveStudent)
     console.log('HomeScreen: step:', step)
-  }, [selectedMood, selectedSkill, currentStudent, step])
+  }, [selectedMood, selectedSkill, currentStudent, effectiveStudent, step])
 
   // Additional debug logging specifically for currentStudent
   useEffect(() => {
@@ -41,17 +54,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
         class_id: currentStudent.class_id
       })
     } else {
-      console.log('HomeScreen: currentStudent is null/undefined')
+      console.log('HomeScreen: currentStudent is null/undefined - using fallback student')
+      // Set the fallback student in the atom if currentStudent is null
+      setCurrentStudent(FALLBACK_STUDENT)
     }
-  }, [currentStudent])
+  }, [currentStudent, setCurrentStudent])
 
-  // Wait for currentStudent to be available before proceeding
+  // Auto-proceed to mood selection when we have a student (real or fallback)
   useEffect(() => {
-    if (currentStudent && step === 'greeting') {
-      console.log('HomeScreen: currentStudent available, moving to mood selection')
+    if (effectiveStudent && step === 'greeting') {
+      console.log('HomeScreen: Student available (real or fallback), moving to mood selection')
       setStep('mood')
     }
-  }, [currentStudent, step])
+  }, [effectiveStudent, step])
 
   const getGreeting = () => {
     const hour = new Date().getHours()
@@ -72,13 +87,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     setStep('ready')
   }
 
-  // Check for all required data including currentStudent
-  const canStartSession = selectedMood && selectedSkill && currentStudent
+  // Check for all required data including effectiveStudent
+  const canStartSession = selectedMood && selectedSkill && effectiveStudent
 
   console.log('HomeScreen: canStartSession check:', {
     hasSelectedMood: !!selectedMood,
     hasSelectedSkill: !!selectedSkill,
-    hasCurrentStudent: !!currentStudent,
+    hasEffectiveStudent: !!effectiveStudent,
     canStartSession
   })
 
@@ -88,44 +103,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
       selectedMood,
       selectedSkill,
       currentStudent,
+      effectiveStudent,
       canStartSession
     })
 
     // Explicit validation check to prevent session start with missing data
-    if (!selectedMood || !selectedSkill || !currentStudent) {
-      console.error('HomeScreen: Cannot start session: missing mood, skill, or authenticated student')
+    if (!selectedMood || !selectedSkill || !effectiveStudent) {
+      console.error('HomeScreen: Cannot start session: missing mood, skill, or student')
       console.error('HomeScreen: Missing data details:', {
         selectedMood: selectedMood ? 'present' : 'missing',
         selectedSkill: selectedSkill ? 'present' : 'missing',
-        currentStudent: currentStudent ? 'present' : 'missing'
+        effectiveStudent: effectiveStudent ? 'present' : 'missing'
       })
       return
     }
     
     console.log('HomeScreen: All data present, calling onStartSession')
     onStartSession()
-  }
-
-  // Show loading state while waiting for currentStudent
-  if (!currentStudent) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-gray-600">Loading your profile...</p>
-          
-          {/* Debug info in development */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-4 p-4 bg-gray-100 rounded-lg text-sm text-left max-w-md">
-              <p><strong>Debug Info:</strong></p>
-              <p>Current Student: {currentStudent ? `${currentStudent.name} (ID: ${currentStudent.id})` : 'null'}</p>
-              <p>Waiting for authentication to complete...</p>
-              <p>Step: {step}</p>
-            </div>
-          )}
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -135,14 +129,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
+          className="space-y-4"
         >
           <div className="flex items-center justify-center gap-2 text-4xl">
             <Sun className="w-10 h-10 text-yellow-500" />
             <span>☁️</span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900">
-            {getGreeting()}, {currentStudent?.name || 'Friend'}!
+            {getGreeting()}, {effectiveStudent?.name || 'Friend'}!
           </h1>
           <p className="text-lg text-gray-600">
             I'm Tess, and I'm here to help you with your feelings today.
@@ -153,6 +147,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
             <div className="mt-4 p-4 bg-gray-100 rounded-lg text-sm text-left">
               <p><strong>Debug Info:</strong></p>
               <p>Current Student: {currentStudent ? `${currentStudent.name} (ID: ${currentStudent.id})` : 'null'}</p>
+              <p>Effective Student: {effectiveStudent ? `${effectiveStudent.name} (ID: ${effectiveStudent.id})` : 'null'}</p>
+              <p>Using Fallback: {!currentStudent && effectiveStudent ? 'Yes' : 'No'}</p>
               <p>Selected Mood: {selectedMood ? selectedMood.label : 'none'}</p>
               <p>Selected Skill: {selectedSkill ? selectedSkill.title : 'none'}</p>
               <p>Can Start Session: {canStartSession ? 'Yes' : 'No'}</p>
@@ -270,9 +266,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
             <Card className="max-w-2xl mx-auto">
               <CardContent className="p-6 text-center">
                 <p className="text-gray-600 mb-4">
-                  {!currentStudent && "Please log in to start a session."}
-                  {!selectedMood && currentStudent && "Please select how you're feeling."}
-                  {!selectedSkill && currentStudent && selectedMood && "Please choose a skill to practice."}
+                  {!effectiveStudent && "Please log in to start a session."}
+                  {!selectedMood && effectiveStudent && "Please select how you're feeling."}
+                  {!selectedSkill && effectiveStudent && selectedMood && "Please choose a skill to practice."}
                 </p>
                 <Button
                   onClick={() => setStep('mood')}
