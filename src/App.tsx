@@ -35,6 +35,7 @@ function App() {
   const [selectedSkill] = useAtom(selectedSkillAtom)
   const [currentSession, setCurrentSession] = useAtom(currentSessionAtom)
   const [isAuthLoading, setIsAuthLoading] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   // Initialize auth state on app load
   useEffect(() => {
@@ -43,6 +44,7 @@ function App() {
 
   const handleStudentLogin = async (qrData: string) => {
     setIsAuthLoading(true)
+    setAuthError(null)
     try {
       const authResponse = await authenticateStudentQR(qrData)
       loginStudent({
@@ -52,7 +54,7 @@ function App() {
       })
     } catch (error) {
       console.error('Student login failed:', error)
-      // Handle error - show user-friendly message
+      setAuthError('Failed to authenticate QR code. Please try again.')
     } finally {
       setIsAuthLoading(false)
     }
@@ -60,6 +62,7 @@ function App() {
 
   const handleStaffLogin = async (email: string, password: string) => {
     setIsAuthLoading(true)
+    setAuthError(null)
     try {
       const authResponse = await authenticateStaff(email, password)
       loginStaff({
@@ -69,7 +72,11 @@ function App() {
       })
     } catch (error) {
       console.error('Staff login failed:', error)
-      // Handle error - show user-friendly message
+      if (error.message.includes('Invalid credentials')) {
+        setAuthError('Invalid credentials. For demo purposes, use: demo@school.edu / demo123')
+      } else {
+        setAuthError('Login failed. Please try again.')
+      }
     } finally {
       setIsAuthLoading(false)
     }
@@ -195,6 +202,7 @@ function App() {
           onStudentLogin={handleStudentLogin}
           onStaffLogin={handleStaffLogin}
           isLoading={isAuthLoading}
+          authError={authError}
         />
       </DailyProvider>
     )

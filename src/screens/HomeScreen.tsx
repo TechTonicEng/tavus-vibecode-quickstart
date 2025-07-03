@@ -48,13 +48,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     setStep('ready')
   }
 
-  // More lenient check - only require mood and skill, not currentStudent
-  const canStartSession = selectedMood && selectedSkill
+  // Check for all required data including currentStudent
+  const canStartSession = selectedMood && selectedSkill && currentStudent
 
   const handleStartSession = () => {
     // Explicit validation check to prevent session start with missing data
-    if (!selectedMood || !selectedSkill) {
-      console.error('Cannot start session: missing mood or skill selection')
+    if (!selectedMood || !selectedSkill || !currentStudent) {
+      console.error('Cannot start session: missing mood, skill, or authenticated student')
       return
     }
     onStartSession()
@@ -181,6 +181,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
                 >
                   <Sparkles className="w-5 h-5 mr-2" />
                   Start My Session with Tess
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {step === 'ready' && !canStartSession && (
+            <Card className="max-w-2xl mx-auto">
+              <CardContent className="p-6 text-center">
+                <p className="text-gray-600 mb-4">
+                  {!currentStudent && "Please log in to start a session."}
+                  {!selectedMood && currentStudent && "Please select how you're feeling."}
+                  {!selectedSkill && currentStudent && selectedMood && "Please choose a skill to practice."}
+                </p>
+                <Button
+                  onClick={() => setStep('mood')}
+                  variant="outline"
+                >
+                  Go Back to Setup
                 </Button>
               </CardContent>
             </Card>

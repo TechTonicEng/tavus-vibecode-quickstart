@@ -68,6 +68,11 @@ export const SessionView: React.FC<SessionViewProps> = ({ onSessionEnd }) => {
     console.log('Participant left:', event.participant)
   }, [])
 
+  const handleLeftMeeting = useCallback((event) => {
+    console.log('Left meeting:', event)
+    onSessionEnd()
+  }, [onSessionEnd])
+
   const handleJoinedMeeting = useCallback((event) => {
     console.log('Joined meeting:', event)
     setIsConnecting(false)
@@ -81,6 +86,7 @@ export const SessionView: React.FC<SessionViewProps> = ({ onSessionEnd }) => {
   // Handle participant events with memoized callbacks
   useDailyEvent('participant-joined', handleParticipantJoined)
   useDailyEvent('participant-left', handleParticipantLeft)
+  useDailyEvent('left-meeting', handleLeftMeeting)
   useDailyEvent('joined-meeting', handleJoinedMeeting)
   useDailyEvent('error', handleError)
 

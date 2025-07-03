@@ -4,12 +4,13 @@ import { QRScanner } from '@/components/QRScanner/QRScanner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { QrCode, Users, Mail, Lock, ArrowLeft, UserPlus } from 'lucide-react'
+import { QrCode, Users, Mail, Lock, ArrowLeft, UserPlus, AlertCircle } from 'lucide-react'
 
 interface LoginScreenProps {
   onStudentLogin: (qrData: string) => void
   onStaffLogin: (email: string, password: string) => void
   isLoading?: boolean
+  authError?: string | null
 }
 
 type LoginMode = 'select' | 'student' | 'staff' | 'staff-signup'
@@ -17,7 +18,8 @@ type LoginMode = 'select' | 'student' | 'staff' | 'staff-signup'
 export const LoginScreen: React.FC<LoginScreenProps> = ({
   onStudentLogin,
   onStaffLogin,
-  isLoading = false
+  isLoading = false,
+  authError = null
 }) => {
   const [mode, setMode] = useState<LoginMode>('select')
   const [email, setEmail] = useState('')
@@ -89,6 +91,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             </div>
           </CardHeader>
           <CardContent>
+            {authError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-red-700">{authError}</p>
+              </div>
+            )}
+            
             <form onSubmit={handleStaffSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium">
@@ -181,6 +190,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             </div>
           </CardHeader>
           <CardContent>
+            {authError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-red-700">{authError}</p>
+              </div>
+            )}
+            
             <form onSubmit={handleStaffSignup} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm font-medium">
