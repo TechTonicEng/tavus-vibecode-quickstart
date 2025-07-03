@@ -2,7 +2,7 @@ import { MoodOption } from '@/types'
 
 export const emotions: MoodOption[] = [
   {
-    emoji: '🐰',
+    emoji: '😊',
     label: 'Happy',
     value: 'happy',
     color: '#FFD93D',
@@ -10,7 +10,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/happy.png'
   },
   {
-    emoji: '🐶',
+    emoji: '😢',
     label: 'Sad',
     value: 'sad',
     color: '#6BB6FF',
@@ -18,7 +18,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/sad.png'
   },
   {
-    emoji: '🐭',
+    emoji: '😨',
     label: 'Scared',
     value: 'scared',
     color: '#FF6B6B',
@@ -26,7 +26,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/scared.png'
   },
   {
-    emoji: '🐋',
+    emoji: '😟',
     label: 'Worried',
     value: 'worried',
     color: '#4ECDC4',
@@ -34,7 +34,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/worried.png'
   },
   {
-    emoji: '🦌',
+    emoji: '😠',
     label: 'Angry',
     value: 'angry',
     color: '#FF8E53',
@@ -42,7 +42,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/angry.png'
   },
   {
-    emoji: '🦊',
+    emoji: '😤',
     label: 'Frustrated',
     value: 'frustrated',
     color: '#FF6B9D',
@@ -50,7 +50,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/frustrated.png'
   },
   {
-    emoji: '🐨',
+    emoji: '😰',
     label: 'Nervous',
     value: 'nervous',
     color: '#C7CEEA',
@@ -58,7 +58,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/nervous.png'
   },
   {
-    emoji: '🐙',
+    emoji: '😳',
     label: 'Shy',
     value: 'shy',
     color: '#FFB347',
@@ -66,7 +66,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/shy.png'
   },
   {
-    emoji: '🦒',
+    emoji: '🤔',
     label: 'Curious',
     value: 'curious',
     color: '#98D8C8',
@@ -74,7 +74,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/curious.png'
   },
   {
-    emoji: '🐧',
+    emoji: '😞',
     label: 'Depressed',
     value: 'depressed',
     color: '#95A5A6',
@@ -82,7 +82,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/depressed.png'
   },
   {
-    emoji: '🐼',
+    emoji: '😑',
     label: 'Bored',
     value: 'bored',
     color: '#BDC3C7',
@@ -90,7 +90,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/bored.png'
   },
   {
-    emoji: '🦅',
+    emoji: '😌',
     label: 'Proud',
     value: 'proud',
     color: '#F39C12',
@@ -98,7 +98,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/proud.png'
   },
   {
-    emoji: '🐰',
+    emoji: '🙂',
     label: 'Hopeful',
     value: 'hopeful',
     color: '#2ECC71',
@@ -106,7 +106,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/hopeful.png'
   },
   {
-    emoji: '🦘',
+    emoji: '😒',
     label: 'Irritated',
     value: 'irritated',
     color: '#E74C3C',
@@ -114,7 +114,7 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/irritated.png'
   },
   {
-    emoji: '⭐',
+    emoji: '😲',
     label: 'Shocked',
     value: 'shocked',
     color: '#9B59B6',

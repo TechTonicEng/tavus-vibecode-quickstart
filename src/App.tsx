@@ -315,6 +315,9 @@ function App() {
       created_at: new Date().toISOString()
     }
 
+    console.log('App: selectedMood:', selectedMood)
+    console.log('App: selectedSkill:', selectedSkill)
+
     // Validate that we have both mood and skill selected
     if (!selectedMood || !selectedSkill) {
       console.error('App: Missing required data for session - mood or skill not selected')

@@ -78,13 +78,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
   const handleMoodSelect = (mood: MoodOption) => {
     console.log('HomeScreen: Mood selected:', mood)
     setSelectedMood(mood)
-    setStep('skill')
+    // Auto-advance to skill selection
+    setTimeout(() => {
+      setStep('skill')
+    }, 500)
   }
 
   const handleSkillSelect = (skill: SELSkill) => {
     console.log('HomeScreen: Skill selected:', skill)
     setSelectedSkill(skill)
-    setStep('ready')
+    // Auto-advance to ready state
+    setTimeout(() => {
+      setStep('ready')
+    }, 500)
   }
 
   // Check for all required data including effectiveStudent
@@ -242,7 +248,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
                           className="w-8 h-8 object-contain"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling!.style.display = 'inline';
+                            const emojiSpan = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (emojiSpan) {
+                              emojiSpan.style.display = 'inline';
+                            }
                           }}
                         />
                       ) : null}

@@ -15,6 +15,11 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
   onMoodSelect,
   className
 }) => {
+  const handleMoodSelect = (emotion: MoodOption) => {
+    console.log('MoodPicker: Mood selected:', emotion)
+    onMoodSelect(emotion)
+  }
+
   return (
     <div className={cn("space-y-6", className)}>
       <div className="text-center">
@@ -36,29 +41,38 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
                 ? "border-primary bg-primary/10 shadow-lg"
                 : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md"
             )}
-            onClick={() => onMoodSelect(emotion)}
+            onClick={() => handleMoodSelect(emotion)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <div className="text-center space-y-2">
               {emotion.image ? (
-                <img 
-                  src={emotion.image} 
-                  alt={emotion.label}
-                  className="w-16 h-16 mx-auto object-contain"
-                  onError={(e) => {
-                    // Fallback to emoji if image fails to load
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling!.style.display = 'block';
-                  }}
-                />
-              ) : null}
-              <div 
-                className="text-4xl" 
-                style={{ display: emotion.image ? 'none' : 'block' }}
-              >
-                {emotion.emoji}
-              </div>
+                <div className="relative">
+                  <img 
+                    src={emotion.image} 
+                    alt={emotion.label}
+                    className="w-16 h-16 mx-auto object-contain"
+                    onError={(e) => {
+                      console.log(`Failed to load image: ${emotion.image}`)
+                      // Hide the image and show emoji fallback
+                      e.currentTarget.style.display = 'none';
+                      const emojiSpan = e.currentTarget.nextElementSibling as HTMLElement;
+                      if (emojiSpan) {
+                        emojiSpan.style.display = 'block';
+                      }
+                    }}
+                  />
+                  <span 
+                    className="text-4xl hidden" 
+                  >
+                    {emotion.emoji}
+                  </span>
+                </div>
+              ) : (
+                <div className="text-4xl">
+                  {emotion.emoji}
+                </div>
+              )}
               <div className="text-sm font-medium text-gray-900">
                 {emotion.label}
               </div>
