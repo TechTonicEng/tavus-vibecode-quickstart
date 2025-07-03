@@ -11,7 +11,7 @@ export const createConversation = async (
     const { data, error } = await supabase.functions.invoke('create-conversation', {
       body: {
         student_id: studentId,
-        mood: mood,
+        mood_emoji: mood,
         sel_skill: selSkill
       }
     })
