@@ -51,6 +51,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
   // More lenient check - only require mood and skill, not currentStudent
   const canStartSession = selectedMood && selectedSkill
 
+  const handleStartSession = () => {
+    // Explicit validation check to prevent session start with missing data
+    if (!selectedMood || !selectedSkill) {
+      console.error('Cannot start session: missing mood or skill selection')
+      return
+    }
+    onStartSession()
+  }
+
   return (
     <div className="h-full overflow-y-auto">
       <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -165,7 +174,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
                 </div>
 
                 <Button
-                  onClick={onStartSession}
+                  onClick={handleStartSession}
                   size="lg"
                   className="w-full"
                   disabled={!canStartSession}
