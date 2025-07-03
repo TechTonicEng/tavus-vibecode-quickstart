@@ -10,9 +10,6 @@ import {
   authStateAtom, 
   currentStudentAtom, 
   currentEducatorAtom,
-  loginStudentAtom,
-  loginStaffAtom,
-  initializeAuthAtom,
   logoutAtom
 } from '@/store/auth'
 import { conversationAtom } from '@/store/conversation'
@@ -25,12 +22,9 @@ type AppView = 'home' | 'session' | 'complete' | 'sessions' | 'skills' | 'settin
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('home')
-  const [authState] = useAtom(authStateAtom)
-  const [currentStudent] = useAtom(currentStudentAtom)
-  const [currentEducator] = useAtom(currentEducatorAtom)
-  const [, loginStudent] = useAtom(loginStudentAtom)
-  const [, loginStaff] = useAtom(loginStaffAtom)
-  const [, initializeAuth] = useAtom(initializeAuthAtom)
+  const [authState, setAuthState] = useAtom(authStateAtom)
+  const [currentStudent, setCurrentStudent] = useAtom(currentStudentAtom)
+  const [currentEducator, setCurrentEducator] = useAtom(currentEducatorAtom)
   const [, logout] = useAtom(logoutAtom)
   const [conversation, setConversation] = useAtom(conversationAtom)
   const [selectedMood] = useAtom(selectedMoodAtom)
@@ -41,19 +35,81 @@ function App() {
 
   // Initialize auth state on app load
   useEffect(() => {
+    const initializeAuth = () => {
+      try {
+        const token = localStorage.getItem('tess_auth_token')
+        const userData = localStorage.getItem('tess_user_data')
+        const userType = localStorage.getItem('tess_user_type') as 'student' | 'staff' | null
+        const expiresAt = localStorage.getItem('tess_expires_at')
+
+        console.log('Initializing auth with:', { token: !!token, userData: !!userData, userType, expiresAt })
+
+        if (token && userData && userType && expiresAt) {
+          // Check if token is expired
+          const now = new Date()
+          const expiry = new Date(expiresAt)
+          
+          if (now < expiry) {
+            const parsedUserData = JSON.parse(userData)
+            console.log('Restoring auth state:', { userType, parsedUserData })
+            
+            setAuthState({
+              isAuthenticated: true,
+              userType,
+              token,
+              expiresAt
+            })
+
+            if (userType === 'student') {
+              setCurrentStudent(parsedUserData)
+              console.log('Set currentStudent from localStorage:', parsedUserData)
+            } else {
+              setCurrentEducator(parsedUserData)
+              console.log('Set currentEducator from localStorage:', parsedUserData)
+            }
+          } else {
+            // Token expired, clear everything
+            console.log('Token expired, clearing auth')
+            logout()
+          }
+        } else {
+          console.log('No valid auth data found in localStorage')
+        }
+      } catch (error) {
+        console.error('Failed to initialize auth state:', error)
+        logout()
+      }
+    }
+
     initializeAuth()
-  }, [initializeAuth])
+  }, [setAuthState, setCurrentStudent, setCurrentEducator, logout])
 
   const handleStudentLogin = async (qrData: string) => {
     setIsAuthLoading(true)
     setAuthError(null)
     try {
+      console.log('Attempting QR login with:', qrData)
       const authResponse = await authenticateStudentQR(qrData)
-      loginStudent({
-        student: authResponse.student,
+      console.log('QR auth response:', authResponse)
+      
+      // Set auth state
+      setAuthState({
+        isAuthenticated: true,
+        userType: 'student',
         token: authResponse.token,
         expiresAt: authResponse.expires_at
       })
+      
+      // Set current student
+      setCurrentStudent(authResponse.student)
+      console.log('Set currentStudent after QR login:', authResponse.student)
+      
+      // Store in localStorage
+      localStorage.setItem('tess_auth_token', authResponse.token)
+      localStorage.setItem('tess_user_data', JSON.stringify(authResponse.student))
+      localStorage.setItem('tess_user_type', 'student')
+      localStorage.setItem('tess_expires_at', authResponse.expires_at)
+      
     } catch (error) {
       console.error('Student login failed:', error)
       setAuthError('Failed to authenticate QR code. Please try again.')
@@ -66,7 +122,9 @@ function App() {
     setIsAuthLoading(true)
     setAuthError(null)
     try {
-      // For demo purposes, create a mock student
+      console.log('Creating student account:', { name, grade, classId })
+      
+      // Create a mock student for demo purposes
       const mockStudent = {
         id: `student_${Date.now()}`,
         name,
@@ -78,14 +136,75 @@ function App() {
       const token = `student_${mockStudent.id}_${Date.now()}`
       const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString()
       
-      loginStudent({
-        student: mockStudent,
+      console.log('Created mock student:', mockStudent)
+      
+      // Set auth state
+      setAuthState({
+        isAuthenticated: true,
+        userType: 'student',
         token,
         expiresAt
       })
+      
+      // Set current student
+      setCurrentStudent(mockStudent)
+      console.log('Set currentStudent after signup:', mockStudent)
+      
+      // Store in localStorage
+      localStorage.setItem('tess_auth_token', token)
+      localStorage.setItem('tess_user_data', JSON.stringify(mockStudent))
+      localStorage.setItem('tess_user_type', 'student')
+      localStorage.setItem('tess_expires_at', expiresAt)
+      
     } catch (error) {
       console.error('Student signup failed:', error)
       setAuthError('Failed to create account. Please try again.')
+    } finally {
+      setIsAuthLoading(false)
+    }
+  }
+
+  const handleStudentSignin = async () => {
+    setIsAuthLoading(true)
+    setAuthError(null)
+    try {
+      console.log('Demo student signin')
+      
+      // Create a demo student
+      const demoStudent = {
+        id: 'demo_student_123',
+        name: 'Demo Student',
+        grade: 4,
+        class_id: 'demo-class',
+        created_at: new Date().toISOString()
+      }
+      
+      const token = `student_demo_${Date.now()}`
+      const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString()
+      
+      console.log('Created demo student:', demoStudent)
+      
+      // Set auth state
+      setAuthState({
+        isAuthenticated: true,
+        userType: 'student',
+        token,
+        expiresAt
+      })
+      
+      // Set current student
+      setCurrentStudent(demoStudent)
+      console.log('Set currentStudent after demo signin:', demoStudent)
+      
+      // Store in localStorage
+      localStorage.setItem('tess_auth_token', token)
+      localStorage.setItem('tess_user_data', JSON.stringify(demoStudent))
+      localStorage.setItem('tess_user_type', 'student')
+      localStorage.setItem('tess_expires_at', expiresAt)
+      
+    } catch (error) {
+      console.error('Demo signin failed:', error)
+      setAuthError('Demo signin failed. Please try again.')
     } finally {
       setIsAuthLoading(false)
     }
@@ -95,12 +214,28 @@ function App() {
     setIsAuthLoading(true)
     setAuthError(null)
     try {
+      console.log('Attempting staff login with:', email)
       const authResponse = await authenticateStaff(email, password)
-      loginStaff({
-        educator: authResponse.educator,
+      console.log('Staff auth response:', authResponse)
+      
+      // Set auth state
+      setAuthState({
+        isAuthenticated: true,
+        userType: 'staff',
         token: authResponse.token,
         expiresAt: authResponse.expires_at
       })
+      
+      // Set current educator
+      setCurrentEducator(authResponse.educator)
+      console.log('Set currentEducator after staff login:', authResponse.educator)
+      
+      // Store in localStorage
+      localStorage.setItem('tess_auth_token', authResponse.token)
+      localStorage.setItem('tess_user_data', JSON.stringify(authResponse.educator))
+      localStorage.setItem('tess_user_type', 'staff')
+      localStorage.setItem('tess_expires_at', authResponse.expires_at)
+      
     } catch (error) {
       console.error('Staff login failed:', error)
       if (error.message.includes('Invalid credentials')) {
@@ -114,6 +249,7 @@ function App() {
   }
 
   const handleLogout = () => {
+    console.log('Logging out user')
     logout()
     setCurrentView('home')
     // Reset session state
@@ -126,6 +262,13 @@ function App() {
   }
 
   const handleStartSession = async () => {
+    console.log('Starting session with:', { 
+      selectedMood, 
+      selectedSkill, 
+      currentStudent,
+      authState 
+    })
+
     if (!selectedMood || !selectedSkill) {
       console.error('Missing required data for session - mood or skill not selected')
       return
@@ -133,6 +276,7 @@ function App() {
 
     if (!currentStudent) {
       console.error('No authenticated student found')
+      setAuthError('Please log in to start a session.')
       return
     }
 
@@ -172,7 +316,7 @@ function App() {
       setCurrentView('session')
     } catch (error) {
       console.error('Failed to start session:', error)
-      // Handle error - show user-friendly message
+      setAuthError('Failed to start session. Please try again.')
     }
   }
 
@@ -244,6 +388,7 @@ function App() {
         <LoginScreen
           onStudentLogin={handleStudentLogin}
           onStudentSignup={handleStudentSignup}
+          onStudentSignin={handleStudentSignin}
           onStaffLogin={handleStaffLogin}
           isLoading={isAuthLoading}
           authError={authError}

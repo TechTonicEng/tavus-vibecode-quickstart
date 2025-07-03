@@ -9,6 +9,7 @@ import { QrCode, Users, Mail, Lock, ArrowLeft, UserPlus, AlertCircle, Graduation
 interface LoginScreenProps {
   onStudentLogin: (qrData: string) => void
   onStudentSignup: (name: string, grade: number, classId: string) => void
+  onStudentSignin: () => void
   onStaffLogin: (email: string, password: string) => void
   isLoading?: boolean
   authError?: string | null
@@ -19,6 +20,7 @@ type LoginMode = 'select' | 'student-qr' | 'student-signup' | 'student-signin' |
 export const LoginScreen: React.FC<LoginScreenProps> = ({
   onStudentLogin,
   onStudentSignup,
+  onStudentSignin,
   onStaffLogin,
   isLoading = false,
   authError = null
@@ -59,9 +61,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
   const handleStudentSignin = (e: React.FormEvent) => {
     e.preventDefault()
-    // For demo purposes, create a mock QR code
-    const mockQRData = `student_qr_${Date.now()}`
-    onStudentLogin(mockQRData)
+    onStudentSignin()
   }
 
   if (mode === 'student-qr') {
