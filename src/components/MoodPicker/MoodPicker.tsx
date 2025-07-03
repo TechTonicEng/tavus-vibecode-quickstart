@@ -22,7 +22,7 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
           How are you feeling today?
         </h2>
         <p className="text-gray-600">
-          Pick the animal that shows how you feel right now
+          Pick the character that shows how you feel right now
         </p>
       </div>
 
@@ -41,7 +41,24 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
             whileTap={{ scale: 0.95 }}
           >
             <div className="text-center space-y-2">
-              <div className="text-4xl">{emotion.emoji}</div>
+              {emotion.image ? (
+                <img 
+                  src={emotion.image} 
+                  alt={emotion.label}
+                  className="w-16 h-16 mx-auto object-contain"
+                  onError={(e) => {
+                    // Fallback to emoji if image fails to load
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling!.style.display = 'block';
+                  }}
+                />
+              ) : null}
+              <div 
+                className="text-4xl" 
+                style={{ display: emotion.image ? 'none' : 'block' }}
+              >
+                {emotion.emoji}
+              </div>
               <div className="text-sm font-medium text-gray-900">
                 {emotion.label}
               </div>

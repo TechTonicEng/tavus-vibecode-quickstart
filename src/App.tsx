@@ -306,12 +306,6 @@ function App() {
       authState 
     })
 
-    if (!selectedMood || !selectedSkill) {
-      console.error('App: Missing required data for session - mood or skill not selected')
-      setAuthError('Please select both a mood and a skill before starting.')
-      return
-    }
-
     // Use currentStudent or fallback for session creation
     const studentForSession = currentStudent || {
       id: 'hardcoded_student_123',
@@ -319,6 +313,15 @@ function App() {
       grade: 4,
       class_id: 'test-class',
       created_at: new Date().toISOString()
+    }
+
+    // Validate that we have both mood and skill selected
+    if (!selectedMood || !selectedSkill) {
+      console.error('App: Missing required data for session - mood or skill not selected')
+      console.error('App: selectedMood:', selectedMood)
+      console.error('App: selectedSkill:', selectedSkill)
+      setAuthError('Please select both a mood and a skill before starting.')
+      return
     }
 
     try {

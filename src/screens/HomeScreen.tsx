@@ -235,7 +235,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
                 <div className="text-center space-y-4">
                   <div className="flex items-center justify-center gap-4">
                     <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-                      <span className="text-2xl">{selectedMood.emoji}</span>
+                      {selectedMood.image ? (
+                        <img 
+                          src={selectedMood.image} 
+                          alt={selectedMood.label}
+                          className="w-8 h-8 object-contain"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling!.style.display = 'inline';
+                          }}
+                        />
+                      ) : null}
+                      <span 
+                        className="text-2xl" 
+                        style={{ display: selectedMood.image ? 'none' : 'inline' }}
+                      >
+                        {selectedMood.emoji}
+                      </span>
                       <span className="font-medium text-primary">{selectedMood.label}</span>
                     </div>
                     <Heart className="w-5 h-5 text-red-500" />

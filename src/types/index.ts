@@ -32,6 +32,7 @@ export interface MoodOption {
   value: string
   color: string
   description: string
+  image?: string
 }
 
 export interface SELSkill {
