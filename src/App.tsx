@@ -27,7 +27,7 @@ function App() {
   useEffect(() => {
     const initializeMockStudent = async () => {
       try {
-        const mockStudentId = 'mock-student-alex'
+        const mockStudentId = '550e8400-e29b-41d4-a716-446655440000'
         
         // Check if student already exists
         const { data: existingStudent, error: fetchError } = await supabase
