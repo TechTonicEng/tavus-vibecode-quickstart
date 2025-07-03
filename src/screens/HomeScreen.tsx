@@ -77,8 +77,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
 
   const handleMoodSelect = (mood: MoodOption) => {
     console.log('HomeScreen: Mood selected:', mood)
+    console.log('HomeScreen: Setting mood atom to:', mood)
     setSelectedMood(mood)
-    console.log('HomeScreen: Mood atom updated, current value:', mood)
+    
+    // Verify the atom was set
+    setTimeout(() => {
+      console.log('HomeScreen: Mood atom after setting:', selectedMood)
+    }, 100)
+    
     // Auto-advance to skill selection
     setTimeout(() => {
       console.log('HomeScreen: Auto-advancing to skill selection')
@@ -88,8 +94,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
 
   const handleSkillSelect = (skill: SELSkill) => {
     console.log('HomeScreen: Skill selected:', skill)
+    console.log('HomeScreen: Setting skill atom to:', skill)
     setSelectedSkill(skill)
-    console.log('HomeScreen: Skill atom updated, current value:', skill)
+    
+    // Verify the atom was set
+    setTimeout(() => {
+      console.log('HomeScreen: Skill atom after setting:', selectedSkill)
+    }, 100)
+    
     // Auto-advance to ready state
     setTimeout(() => {
       console.log('HomeScreen: Auto-advancing to ready state')
@@ -97,13 +109,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     }, 500)
   }
 
-  // REMOVED STUDENT REQUIREMENT - Only check for mood and skill
+  // Only check for mood and skill
   const canStartSession = selectedMood && selectedSkill
 
   console.log('HomeScreen: canStartSession check:', {
     hasSelectedMood: !!selectedMood,
     hasSelectedSkill: !!selectedSkill,
-    canStartSession
+    canStartSession,
+    selectedMoodValue: selectedMood?.value,
+    selectedSkillId: selectedSkill?.id
   })
 
   const handleStartSession = () => {
@@ -155,8 +169,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
               <p>Current Student: {currentStudent ? `${currentStudent.name} (ID: ${currentStudent.id})` : 'null'}</p>
               <p>Effective Student: {effectiveStudent ? `${effectiveStudent.name} (ID: ${effectiveStudent.id})` : 'null'}</p>
               <p>Using Fallback: {!currentStudent && effectiveStudent ? 'Yes' : 'No'}</p>
-              <p>Selected Mood: {selectedMood ? selectedMood.label : 'none'}</p>
-              <p>Selected Skill: {selectedSkill ? selectedSkill.title : 'none'}</p>
+              <p>Selected Mood: {selectedMood ? `${selectedMood.label} (${selectedMood.value})` : 'none'}</p>
+              <p>Selected Skill: {selectedSkill ? `${selectedSkill.title} (${selectedSkill.id})` : 'none'}</p>
               <p>Can Start Session: {canStartSession ? 'Yes' : 'No'}</p>
               <p>Current Step: {step}</p>
             </div>
