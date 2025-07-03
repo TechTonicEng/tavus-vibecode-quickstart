@@ -26,7 +26,7 @@ function App() {
   useEffect(() => {
     // Simulate student login
     const mockStudent = {
-      id: 'student-123',
+      id: crypto.randomUUID(),
       name: 'Alex',
       grade: 3,
       class_id: 'class-456',
