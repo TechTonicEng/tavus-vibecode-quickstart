@@ -10,6 +10,7 @@ import { conversationAtom } from '@/store/conversation'
 import { selectedMoodAtom, selectedSkillAtom, currentSessionAtom } from '@/store/session'
 import { createConversation } from '@/api/conversation'
 import { createSession } from '@/api/sessions'
+import { supabase } from '@/lib/supabase'
 
 type AppView = 'home' | 'session' | 'complete' | 'sessions' | 'skills' | 'settings' | 'profile'
 
@@ -24,17 +25,56 @@ function App() {
 
   // Mock authentication - in real app this would be handled by Clever/ClassLink
   useEffect(() => {
-    // Simulate student login
-    const mockStudent = {
-      id: crypto.randomUUID(),
-      name: 'Alex',
-      grade: 3,
-      class_id: 'class-456',
-      created_at: new Date().toISOString()
+    const initializeMockStudent = async () => {
+      try {
+        const mockStudentId = 'mock-student-alex'
+        
+        // Check if student already exists
+        const { data: existingStudent, error: fetchError } = await supabase
+          .from('students')
+          .select('*')
+          .eq('id', mockStudentId)
+          .single()
+
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          // PGRST116 is "not found" error, which is expected if student doesn't exist
+          console.error('Error checking for existing student:', fetchError)
+          return
+        }
+
+        let student = existingStudent
+
+        if (!student) {
+          // Student doesn't exist, create them
+          const mockStudentData = {
+            id: mockStudentId,
+            name: 'Alex',
+            grade: 3,
+            class_id: 'class-456'
+          }
+
+          const { data: newStudent, error: insertError } = await supabase
+            .from('students')
+            .insert(mockStudentData)
+            .select()
+            .single()
+
+          if (insertError) {
+            console.error('Error creating mock student:', insertError)
+            return
+          }
+
+          student = newStudent
+        }
+
+        setCurrentStudent(student)
+        setIsAuthenticated(true)
+      } catch (error) {
+        console.error('Failed to initialize mock student:', error)
+      }
     }
-    
-    setCurrentStudent(mockStudent)
-    setIsAuthenticated(true)
+
+    initializeMockStudent()
   }, [setCurrentStudent, setIsAuthenticated])
 
   const handleStartSession = async () => {
