@@ -31,6 +31,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     })
   }, [selectedMood, selectedSkill, currentStudent, step])
 
+  // Additional debug logging specifically for currentStudent
+  useEffect(() => {
+    console.log('HomeScreen: currentStudent atom value:', currentStudent)
+    if (currentStudent) {
+      console.log('HomeScreen: currentStudent details:', {
+        id: currentStudent.id,
+        name: currentStudent.name,
+        grade: currentStudent.grade,
+        class_id: currentStudent.class_id
+      })
+    } else {
+      console.log('HomeScreen: currentStudent is null/undefined')
+    }
+  }, [currentStudent])
+
   const getGreeting = () => {
     const hour = new Date().getHours()
     if (hour < 12) return 'Good Morning'
@@ -39,11 +54,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
   }
 
   const handleMoodSelect = (mood: MoodOption) => {
+    console.log('HomeScreen: Mood selected:', mood)
     setSelectedMood(mood)
     setStep('skill')
   }
 
   const handleSkillSelect = (skill: SELSkill) => {
+    console.log('HomeScreen: Skill selected:', skill)
     setSelectedSkill(skill)
     setStep('ready')
   }
@@ -51,12 +68,34 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
   // Check for all required data including currentStudent
   const canStartSession = selectedMood && selectedSkill && currentStudent
 
+  console.log('HomeScreen: canStartSession check:', {
+    hasSelectedMood: !!selectedMood,
+    hasSelectedSkill: !!selectedSkill,
+    hasCurrentStudent: !!currentStudent,
+    canStartSession
+  })
+
   const handleStartSession = () => {
+    console.log('HomeScreen: handleStartSession called')
+    console.log('HomeScreen: Current state before starting session:', {
+      selectedMood,
+      selectedSkill,
+      currentStudent,
+      canStartSession
+    })
+
     // Explicit validation check to prevent session start with missing data
     if (!selectedMood || !selectedSkill || !currentStudent) {
-      console.error('Cannot start session: missing mood, skill, or authenticated student')
+      console.error('HomeScreen: Cannot start session: missing mood, skill, or authenticated student')
+      console.error('HomeScreen: Missing data details:', {
+        selectedMood: selectedMood ? 'present' : 'missing',
+        selectedSkill: selectedSkill ? 'present' : 'missing',
+        currentStudent: currentStudent ? 'present' : 'missing'
+      })
       return
     }
+    
+    console.log('HomeScreen: All data present, calling onStartSession')
     onStartSession()
   }
 
@@ -79,6 +118,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
           <p className="text-lg text-gray-600">
             I'm Tess, and I'm here to help you with your feelings today.
           </p>
+          
+          {/* Debug info in development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-4 bg-gray-100 rounded-lg text-sm text-left">
+              <p><strong>Debug Info:</strong></p>
+              <p>Current Student: {currentStudent ? `${currentStudent.name} (ID: ${currentStudent.id})` : 'null'}</p>
+              <p>Selected Mood: {selectedMood ? selectedMood.label : 'none'}</p>
+              <p>Selected Skill: {selectedSkill ? selectedSkill.title : 'none'}</p>
+              <p>Can Start Session: {canStartSession ? 'Yes' : 'No'}</p>
+            </div>
+          )}
         </motion.div>
 
         {/* Progress Steps */}

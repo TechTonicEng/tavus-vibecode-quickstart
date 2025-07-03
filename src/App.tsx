@@ -33,6 +33,11 @@ function App() {
   const [isAuthLoading, setIsAuthLoading] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
 
+  // Debug logging for currentStudent changes
+  useEffect(() => {
+    console.log('App: currentStudent changed:', currentStudent)
+  }, [currentStudent])
+
   // Initialize auth state on app load
   useEffect(() => {
     const initializeAuth = () => {
@@ -53,6 +58,7 @@ function App() {
             const parsedUserData = JSON.parse(userData)
             console.log('Restoring auth state:', { userType, parsedUserData })
             
+            // Set auth state first
             setAuthState({
               isAuthenticated: true,
               userType,
@@ -60,12 +66,13 @@ function App() {
               expiresAt
             })
 
+            // Then set user data
             if (userType === 'student') {
+              console.log('Setting currentStudent from localStorage:', parsedUserData)
               setCurrentStudent(parsedUserData)
-              console.log('Set currentStudent from localStorage:', parsedUserData)
             } else {
+              console.log('Setting currentEducator from localStorage:', parsedUserData)
               setCurrentEducator(parsedUserData)
-              console.log('Set currentEducator from localStorage:', parsedUserData)
             }
           } else {
             // Token expired, clear everything
@@ -92,7 +99,7 @@ function App() {
       const authResponse = await authenticateStudentQR(qrData)
       console.log('QR auth response:', authResponse)
       
-      // Set auth state
+      // Set auth state first
       setAuthState({
         isAuthenticated: true,
         userType: 'student',
@@ -100,15 +107,18 @@ function App() {
         expiresAt: authResponse.expires_at
       })
       
-      // Set current student
+      // Set current student immediately after auth state
+      console.log('Setting currentStudent after QR login:', authResponse.student)
       setCurrentStudent(authResponse.student)
-      console.log('Set currentStudent after QR login:', authResponse.student)
       
       // Store in localStorage
       localStorage.setItem('tess_auth_token', authResponse.token)
       localStorage.setItem('tess_user_data', JSON.stringify(authResponse.student))
       localStorage.setItem('tess_user_type', 'student')
       localStorage.setItem('tess_expires_at', authResponse.expires_at)
+      
+      // Verify the student was set
+      console.log('Verification - currentStudent after setting:', authResponse.student)
       
     } catch (error) {
       console.error('Student login failed:', error)
@@ -124,8 +134,8 @@ function App() {
     try {
       console.log('Creating student account:', { name, grade, classId })
       
-      // Create a mock student for demo purposes
-      const mockStudent = {
+      // Create a student object
+      const newStudent = {
         id: `student_${Date.now()}`,
         name,
         grade,
@@ -133,12 +143,12 @@ function App() {
         created_at: new Date().toISOString()
       }
       
-      const token = `student_${mockStudent.id}_${Date.now()}`
+      const token = `student_${newStudent.id}_${Date.now()}`
       const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString()
       
-      console.log('Created mock student:', mockStudent)
+      console.log('Created student:', newStudent)
       
-      // Set auth state
+      // Set auth state first
       setAuthState({
         isAuthenticated: true,
         userType: 'student',
@@ -146,15 +156,18 @@ function App() {
         expiresAt
       })
       
-      // Set current student
-      setCurrentStudent(mockStudent)
-      console.log('Set currentStudent after signup:', mockStudent)
+      // Set current student immediately
+      console.log('Setting currentStudent after signup:', newStudent)
+      setCurrentStudent(newStudent)
       
       // Store in localStorage
       localStorage.setItem('tess_auth_token', token)
-      localStorage.setItem('tess_user_data', JSON.stringify(mockStudent))
+      localStorage.setItem('tess_user_data', JSON.stringify(newStudent))
       localStorage.setItem('tess_user_type', 'student')
       localStorage.setItem('tess_expires_at', expiresAt)
+      
+      // Verify the student was set
+      console.log('Verification - currentStudent after signup:', newStudent)
       
     } catch (error) {
       console.error('Student signup failed:', error)
@@ -184,7 +197,7 @@ function App() {
       
       console.log('Created demo student:', demoStudent)
       
-      // Set auth state
+      // Set auth state first
       setAuthState({
         isAuthenticated: true,
         userType: 'student',
@@ -192,15 +205,18 @@ function App() {
         expiresAt
       })
       
-      // Set current student
+      // Set current student immediately
+      console.log('Setting currentStudent after demo signin:', demoStudent)
       setCurrentStudent(demoStudent)
-      console.log('Set currentStudent after demo signin:', demoStudent)
       
       // Store in localStorage
       localStorage.setItem('tess_auth_token', token)
       localStorage.setItem('tess_user_data', JSON.stringify(demoStudent))
       localStorage.setItem('tess_user_type', 'student')
       localStorage.setItem('tess_expires_at', expiresAt)
+      
+      // Verify the student was set
+      console.log('Verification - currentStudent after demo signin:', demoStudent)
       
     } catch (error) {
       console.error('Demo signin failed:', error)
@@ -271,6 +287,7 @@ function App() {
 
     if (!selectedMood || !selectedSkill) {
       console.error('Missing required data for session - mood or skill not selected')
+      setAuthError('Please select both a mood and a skill before starting.')
       return
     }
 
@@ -380,6 +397,11 @@ function App() {
         return <HomeScreen onStartSession={handleStartSession} />
     }
   }
+
+  // Debug: Log current state
+  console.log('App render - Auth State:', authState)
+  console.log('App render - Current Student:', currentStudent)
+  console.log('App render - Current Educator:', currentEducator)
 
   // Show login screen if not authenticated
   if (!authState.isAuthenticated) {
