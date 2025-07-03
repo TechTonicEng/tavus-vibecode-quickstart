@@ -38,7 +38,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     setStep('ready')
   }
 
-  const canStartSession = selectedMood && selectedSkill
+  const canStartSession = selectedMood && selectedSkill && currentStudent
 
   return (
     <div className="h-full overflow-y-auto">
@@ -157,6 +157,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
                   onClick={onStartSession}
                   size="lg"
                   className="w-full"
+                  disabled={!canStartSession}
                 >
                   <Sparkles className="w-5 h-5 mr-2" />
                   Start My Session with Tess
