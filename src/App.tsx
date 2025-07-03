@@ -8,7 +8,8 @@ import { SessionComplete } from '@/screens/SessionComplete'
 import { currentStudentAtom, isAuthenticatedAtom } from '@/store/auth'
 import { conversationAtom } from '@/store/conversation'
 import { selectedMoodAtom, selectedSkillAtom, currentSessionAtom } from '@/store/session'
-import { createConversation } from '@/api/conversation'
+import { apiTokenAtom } from '@/store/tokens'
+import { createTavusConversationDirect } from '@/api/createConversation'
 import { createSession } from '@/api/sessions'
 import { supabase } from '@/lib/supabase'
 
@@ -22,6 +23,7 @@ function App() {
   const [selectedMood] = useAtom(selectedMoodAtom)
   const [selectedSkill] = useAtom(selectedSkillAtom)
   const [currentSession, setCurrentSession] = useAtom(currentSessionAtom)
+  const [apiToken] = useAtom(apiTokenAtom)
 
   // Mock authentication - in real app this would be handled by Clever/ClassLink
   useEffect(() => {
@@ -83,6 +85,11 @@ function App() {
       return
     }
 
+    if (!apiToken) {
+      console.error('API token not available')
+      return
+    }
+
     try {
       // Create session record
       const sessionData = {
@@ -98,12 +105,8 @@ function App() {
       const session = await createSession(sessionData)
       setCurrentSession(session)
 
-      // Create Tavus conversation using Supabase edge function
-      const conversationResponse = await createConversation(
-        currentStudent.id,
-        selectedMood.value,
-        selectedSkill.id
-      )
+      // Create Tavus conversation using direct API call
+      const conversationResponse = await createTavusConversationDirect(apiToken)
 
       setConversation({
         conversation_id: conversationResponse.conversation_id,
