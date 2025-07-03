@@ -146,6 +146,14 @@ verify_jwt = false
 import_map = "./supabase/functions/import_map.json"
 allowed_hosts = ["https://tavusapi.com"]
 
+[functions.authenticate-qr]
+verify_jwt = false
+import_map = "./supabase/functions/import_map.json"
+
+[functions.authenticate-staff]
+verify_jwt = false
+import_map = "./supabase/functions/import_map.json"
+
 [analytics]
 enabled = false
 port = 54327

@@ -1,103 +1,79 @@
 import React, { useState, useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { DailyProvider } from '@daily-co/daily-react'
+import { LoginScreen } from '@/screens/LoginScreen'
 import { Sidebar } from '@/components/Layout/Sidebar'
 import { HomeScreen } from '@/screens/HomeScreen'
 import { SessionView } from '@/components/Session/SessionView'
 import { SessionComplete } from '@/screens/SessionComplete'
-import { currentStudentAtom, isAuthenticatedAtom } from '@/store/auth'
+import { 
+  authStateAtom, 
+  currentStudentAtom, 
+  currentEducatorAtom,
+  loginStudentAtom,
+  loginStaffAtom,
+  initializeAuthAtom
+} from '@/store/auth'
 import { conversationAtom } from '@/store/conversation'
 import { selectedMoodAtom, selectedSkillAtom, currentSessionAtom } from '@/store/session'
 import { createConversation } from '@/api/conversation'
 import { createSession } from '@/api/sessions'
-import { supabase } from '@/lib/supabase'
+import { authenticateStudentQR, authenticateStaff } from '@/api/auth'
 
 type AppView = 'home' | 'session' | 'complete' | 'sessions' | 'skills' | 'settings' | 'profile'
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('home')
-  const [isAuthenticated, setIsAuthenticated] = useAtom(isAuthenticatedAtom)
-  const [currentStudent, setCurrentStudent] = useAtom(currentStudentAtom)
+  const [authState] = useAtom(authStateAtom)
+  const [currentStudent] = useAtom(currentStudentAtom)
+  const [currentEducator] = useAtom(currentEducatorAtom)
+  const [, loginStudent] = useAtom(loginStudentAtom)
+  const [, loginStaff] = useAtom(loginStaffAtom)
+  const [, initializeAuth] = useAtom(initializeAuthAtom)
   const [conversation, setConversation] = useAtom(conversationAtom)
   const [selectedMood] = useAtom(selectedMoodAtom)
   const [selectedSkill] = useAtom(selectedSkillAtom)
   const [currentSession, setCurrentSession] = useAtom(currentSessionAtom)
+  const [isAuthLoading, setIsAuthLoading] = useState(false)
 
-  // Mock authentication - in real app this would be handled by Clever/ClassLink
+  // Initialize auth state on app load
   useEffect(() => {
-    const initializeMockStudent = async () => {
-      try {
-        const mockStudentId = '550e8400-e29b-41d4-a716-446655440000'
-        
-        console.log('Initializing mock student with ID:', mockStudentId)
+    initializeAuth()
+  }, [initializeAuth])
 
-        // Create a fallback student object first
-        const fallbackStudent = {
-          id: mockStudentId,
-          name: 'Alex',
-          grade: 3,
-          class_id: 'class-456',
-          created_at: new Date().toISOString()
-        }
-
-        // Set the fallback student immediately so the app can work
-        setCurrentStudent(fallbackStudent)
-        setIsAuthenticated(true)
-        console.log('Fallback student set:', fallbackStudent)
-
-        // Try to check/create in database, but don't block the app if it fails
-        try {
-          const { data: existingStudent, error: fetchError } = await supabase
-            .from('students')
-            .select('*')
-            .eq('id', mockStudentId)
-            .maybeSingle()
-
-          if (!fetchError && existingStudent) {
-            // Update with real data from database
-            setCurrentStudent(existingStudent)
-            console.log('Updated with database student:', existingStudent)
-          } else if (!fetchError && !existingStudent) {
-            // Try to create in database
-            const { data: newStudent, error: insertError } = await supabase
-              .from('students')
-              .insert({
-                id: mockStudentId,
-                name: 'Alex',
-                grade: 3,
-                class_id: 'class-456'
-              })
-              .select()
-              .single()
-
-            if (!insertError && newStudent) {
-              setCurrentStudent(newStudent)
-              console.log('Created and set new student:', newStudent)
-            }
-          }
-        } catch (dbError) {
-          console.warn('Database operation failed, using fallback student:', dbError)
-          // Fallback student is already set, so app continues to work
-        }
-
-      } catch (error) {
-        console.error('Failed to initialize mock student:', error)
-        // Even if everything fails, create a basic student object
-        const emergencyStudent = {
-          id: '550e8400-e29b-41d4-a716-446655440000',
-          name: 'Alex',
-          grade: 3,
-          class_id: 'class-456',
-          created_at: new Date().toISOString()
-        }
-        setCurrentStudent(emergencyStudent)
-        setIsAuthenticated(true)
-        console.log('Emergency student set:', emergencyStudent)
-      }
+  const handleStudentLogin = async (qrData: string) => {
+    setIsAuthLoading(true)
+    try {
+      const authResponse = await authenticateStudentQR(qrData)
+      loginStudent({
+        student: authResponse.student,
+        token: authResponse.token,
+        expiresAt: authResponse.expires_at
+      })
+    } catch (error) {
+      console.error('Student login failed:', error)
+      // Handle error - show user-friendly message
+    } finally {
+      setIsAuthLoading(false)
     }
+  }
 
-    initializeMockStudent()
-  }, [setCurrentStudent, setIsAuthenticated])
+  const handleStaffLogin = async (email: string, password: string) => {
+    setIsAuthLoading(true)
+    try {
+      const authResponse = await authenticateStaff(email, password)
+      loginStaff({
+        educator: authResponse.educator,
+        token: authResponse.token,
+        expiresAt: authResponse.expires_at
+      })
+    } catch (error) {
+      console.error('Staff login failed:', error)
+      // Handle error - show user-friendly message
+    } finally {
+      setIsAuthLoading(false)
+    }
+  }
 
   const handleStartSession = async () => {
     if (!selectedMood || !selectedSkill) {
@@ -105,21 +81,17 @@ function App() {
       return
     }
 
-    // Use fallback student if currentStudent is not available
-    const studentToUse = currentStudent || {
-      id: '550e8400-e29b-41d4-a716-446655440000',
-      name: 'Alex',
-      grade: 3,
-      class_id: 'class-456',
-      created_at: new Date().toISOString()
+    if (!currentStudent) {
+      console.error('No authenticated student found')
+      return
     }
 
     try {
-      console.log('Starting session with:', { selectedMood, selectedSkill, student: studentToUse })
+      console.log('Starting session with:', { selectedMood, selectedSkill, student: currentStudent })
 
       // Create session record first
       const sessionData = {
-        student_id: studentToUse.id,
+        student_id: currentStudent.id,
         mood_emoji: selectedMood.emoji,
         mood_score: 0, // Will be updated during session
         sel_skill: selectedSkill.id,
@@ -134,7 +106,7 @@ function App() {
 
       // Create Tavus conversation using Edge Function
       const conversationResponse = await createConversation(
-        studentToUse.id,
+        currentStudent.id,
         selectedMood.emoji,
         selectedSkill.id
       )
@@ -215,21 +187,28 @@ function App() {
     }
   }
 
-  if (!isAuthenticated) {
+  // Show login screen if not authenticated
+  if (!authState.isAuthenticated) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-primary/20 rounded-full animate-pulse mx-auto"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
+      <DailyProvider>
+        <LoginScreen
+          onStudentLogin={handleStudentLogin}
+          onStaffLogin={handleStaffLogin}
+          isLoading={isAuthLoading}
+        />
+      </DailyProvider>
     )
   }
 
   return (
     <DailyProvider>
       <div className="h-screen flex bg-gray-50">
-        <Sidebar currentView={currentView} onViewChange={setCurrentView} />
+        <Sidebar 
+          currentView={currentView} 
+          onViewChange={setCurrentView}
+          userType={authState.userType}
+          currentUser={currentStudent || currentEducator}
+        />
         <main className="flex-1 overflow-hidden">
           {renderMainContent()}
         </main>
