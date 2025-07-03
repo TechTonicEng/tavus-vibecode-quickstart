@@ -15,6 +15,8 @@ export const TessAvatar: React.FC<TessAvatarProps> = ({
 }) => {
   const videoState = useVideoTrack(sessionId || '')
 
+  console.log('TessAvatar render:', { sessionId, isLoading, videoState })
+
   if (isLoading || !sessionId) {
     return (
       <div className={cn(
@@ -27,6 +29,9 @@ export const TessAvatar: React.FC<TessAvatarProps> = ({
             <div className="h-4 bg-primary/20 rounded w-32 mx-auto animate-pulse"></div>
             <div className="h-3 bg-primary/10 rounded w-24 mx-auto animate-pulse"></div>
           </div>
+          <p className="text-sm text-gray-600">
+            {isLoading ? 'Connecting to Tess...' : 'Waiting for Tess to join...'}
+          </p>
         </div>
       </div>
     )
@@ -51,6 +56,14 @@ export const TessAvatar: React.FC<TessAvatarProps> = ({
           <p className="text-sm opacity-90">Your emotional support friend</p>
         </div>
       </div>
+      
+      {/* Debug overlay in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="absolute top-2 left-2 bg-black/50 text-white text-xs p-2 rounded">
+          Session: {sessionId}<br/>
+          Video: {videoState.isOff ? 'Off' : 'On'}
+        </div>
+      )}
     </div>
   )
 }
