@@ -19,6 +19,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({
   const [hasPermission, setHasPermission] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isScanning, setIsScanning] = useState(false)
+  const [scanProgress, setScanProgress] = useState(0)
 
   useEffect(() => {
     startCamera()
@@ -74,16 +75,11 @@ export const QRScanner: React.FC<QRScannerProps> = ({
         canvas.height = video.videoHeight
         context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-        // In a real implementation, you would use a QR code library here
-        // For demo purposes, we'll simulate QR detection
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
-        
-        // Simulate QR code detection (replace with actual QR library)
-        if (Math.random() < 0.1) { // 10% chance per frame for demo
-          const mockQRData = 'student_qr_' + Date.now()
-          onScanSuccess(mockQRData)
-          return
-        }
+        // Update scan progress
+        setScanProgress(prev => {
+          const newProgress = prev + 2
+          return newProgress > 100 ? 0 : newProgress
+        })
       }
 
       if (isScanning) {
@@ -91,18 +87,36 @@ export const QRScanner: React.FC<QRScannerProps> = ({
       }
     }
 
+    // Start the scanning animation
     video.addEventListener('loadedmetadata', () => {
       scanFrame()
+      
+      // Simulate QR detection after 3 seconds once camera is ready
+      setTimeout(() => {
+        if (isScanning) {
+          const mockQRData = 'student_qr_' + Date.now()
+          onScanSuccess(mockQRData)
+        }
+      }, 3000)
     })
 
     if (video.readyState >= video.HAVE_ENOUGH_DATA) {
       scanFrame()
+      
+      // Simulate QR detection after 3 seconds if video is already ready
+      setTimeout(() => {
+        if (isScanning) {
+          const mockQRData = 'student_qr_' + Date.now()
+          onScanSuccess(mockQRData)
+        }
+      }, 3000)
     }
   }
 
   const handleRetry = () => {
     setError(null)
     setHasPermission(null)
+    setScanProgress(0)
     startCamera()
   }
 
@@ -171,7 +185,13 @@ export const QRScanner: React.FC<QRScannerProps> = ({
               
               {isScanning && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-full h-1 bg-primary animate-pulse"></div>
+                  <div 
+                    className="w-full h-1 bg-primary transition-all duration-100"
+                    style={{ 
+                      transform: `translateY(${(scanProgress / 100) * 192 - 96}px)`,
+                      opacity: 0.8
+                    }}
+                  ></div>
                 </div>
               )}
             </div>
@@ -183,7 +203,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({
             Hold your QR code badge in front of the camera
           </p>
           <p className="text-sm text-gray-500">
-            Make sure the code is clearly visible and well-lit
+            {isScanning ? 'Scanning... (auto-detects in 3 seconds)' : 'Make sure the code is clearly visible and well-lit'}
           </p>
         </div>
 

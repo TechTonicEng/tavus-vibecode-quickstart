@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useAtom } from 'jotai'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDaily, useLocalSessionId, useParticipantIds, useDailyEvent } from '@daily-co/daily-react'
@@ -56,27 +56,33 @@ export const SessionView: React.FC<SessionViewProps> = ({ onSessionEnd }) => {
     }
   }, [conversation?.conversation_url, daily])
 
-  // Handle participant events
-  useDailyEvent('participant-joined', (event) => {
+  // Memoized event handlers
+  const handleParticipantJoined = useCallback((event) => {
     console.log('Participant joined:', event.participant)
     if (event.participant.user_id !== localSessionId) {
       setIsConnecting(false)
     }
-  })
+  }, [localSessionId])
 
-  useDailyEvent('participant-left', (event) => {
+  const handleParticipantLeft = useCallback((event) => {
     console.log('Participant left:', event.participant)
-  })
+  }, [])
 
-  useDailyEvent('joined-meeting', (event) => {
+  const handleJoinedMeeting = useCallback((event) => {
     console.log('Joined meeting:', event)
     setIsConnecting(false)
-  })
+  }, [])
 
-  useDailyEvent('error', (event) => {
+  const handleError = useCallback((event) => {
     console.error('Daily error:', event)
     setIsConnecting(false)
-  })
+  }, [])
+
+  // Handle participant events with memoized callbacks
+  useDailyEvent('participant-joined', handleParticipantJoined)
+  useDailyEvent('participant-left', handleParticipantLeft)
+  useDailyEvent('joined-meeting', handleJoinedMeeting)
+  useDailyEvent('error', handleError)
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
