@@ -13,7 +13,7 @@ import { conversationAtom } from "@/store/conversation";
 import { useAtom, useAtomValue } from "jotai";
 import { screenAtom } from "@/store/screens";
 import { Button } from "@/components/ui/button";
-import { endConversation } from "@/api/endConversation";
+import { endConversation } from "@/api/conversation";
 import {
   MicIcon,
   MicOffIcon,
@@ -31,7 +31,6 @@ import { Timer } from "@/components/Timer";
 import { TIME_LIMIT } from "@/config";
 import { niceScoreAtom } from "@/store/game";
 import { naughtyScoreAtom } from "@/store/game";
-import { apiTokenAtom } from "@/store/tokens";
 import { quantum } from 'ldrs';
 import { cn } from "@/lib/utils";
 
@@ -54,7 +53,6 @@ export const Conversation: React.FC = () => {
   const [, setScreenState] = useAtom(screenAtom);
   const [naughtyScore] = useAtom(naughtyScoreAtom);
   const [niceScore] = useAtom(niceScoreAtom);
-  const token = useAtomValue(apiTokenAtom);
 
   const daily = useDaily();
   const localSessionId = useLocalSessionId();
@@ -139,8 +137,8 @@ export const Conversation: React.FC = () => {
   const leaveConversation = useCallback(() => {
     daily?.leave();
     daily?.destroy();
-    if (conversation?.conversation_id && token) {
-      endConversation(token, conversation.conversation_id);
+    if (conversation?.conversation_id) {
+      endConversation(conversation.conversation_id);
     }
     setConversation(null);
     clearSessionTime();
@@ -151,7 +149,7 @@ export const Conversation: React.FC = () => {
     } else {
       setScreenState({ currentScreen: "finalScreen" });
     }
-  }, [daily, token]);
+  }, [daily]);
 
   return (
     <DialogWrapper>
