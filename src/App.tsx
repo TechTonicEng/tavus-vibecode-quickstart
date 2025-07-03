@@ -34,11 +34,20 @@ function App() {
           .from('students')
           .select('*')
           .eq('id', mockStudentId)
-          .single()
+          .maybeSingle()
 
-        if (fetchError && fetchError.code !== 'PGRST116') {
-          // PGRST116 is "not found" error, which is expected if student doesn't exist
+        if (fetchError) {
           console.error('Error checking for existing student:', fetchError)
+          // If there's an error, create a fallback student object
+          const fallbackStudent = {
+            id: mockStudentId,
+            name: 'Alex',
+            grade: 3,
+            class_id: 'class-456',
+            created_at: new Date().toISOString()
+          }
+          setCurrentStudent(fallbackStudent)
+          setIsAuthenticated(true)
           return
         }
 
@@ -61,16 +70,31 @@ function App() {
 
           if (insertError) {
             console.error('Error creating mock student:', insertError)
-            return
+            // If insert fails, use the mock data directly
+            student = {
+              ...mockStudentData,
+              created_at: new Date().toISOString()
+            }
+          } else {
+            student = newStudent
           }
-
-          student = newStudent
         }
 
         setCurrentStudent(student)
         setIsAuthenticated(true)
+        console.log('Mock student initialized:', student)
       } catch (error) {
         console.error('Failed to initialize mock student:', error)
+        // Create a fallback student even if everything fails
+        const fallbackStudent = {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          name: 'Alex',
+          grade: 3,
+          class_id: 'class-456',
+          created_at: new Date().toISOString()
+        }
+        setCurrentStudent(fallbackStudent)
+        setIsAuthenticated(true)
       }
     }
 
