@@ -4,7 +4,7 @@ import { QRScanner } from '@/components/QRScanner/QRScanner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { QrCode, Users, Mail, Lock, ArrowLeft } from 'lucide-react'
+import { QrCode, Users, Mail, Lock, ArrowLeft, UserPlus } from 'lucide-react'
 
 interface LoginScreenProps {
   onStudentLogin: (qrData: string) => void
@@ -12,7 +12,7 @@ interface LoginScreenProps {
   isLoading?: boolean
 }
 
-type LoginMode = 'select' | 'student' | 'staff'
+type LoginMode = 'select' | 'student' | 'staff' | 'staff-signup'
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({
   onStudentLogin,
@@ -22,10 +22,24 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const [mode, setMode] = useState<LoginMode>('select')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [name, setName] = useState('')
 
   const handleStaffSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (email && password) {
+      onStaffLogin(email, password)
+    }
+  }
+
+  const handleStaffSignup = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (email && password && confirmPassword && name) {
+      if (password !== confirmPassword) {
+        alert('Passwords do not match')
+        return
+      }
+      // For demo purposes, treat signup the same as login
       onStaffLogin(email, password)
     }
   }
@@ -127,9 +141,142 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 )}
               </Button>
 
-              <div className="text-center">
+              <div className="text-center space-y-2">
+                <Button 
+                  type="button"
+                  variant="link" 
+                  className="text-sm"
+                  onClick={() => setMode('staff-signup')}
+                >
+                  Don't have an account? Sign up
+                </Button>
                 <Button variant="link" className="text-sm">
                   Use Clever/ClassLink SSO
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (mode === 'staff-signup') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <UserPlus className="w-5 h-5" />
+                Staff Sign Up
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMode('staff')}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleStaffSignup} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your full name"
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="signup-email" className="text-sm font-medium">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="signup-password" className="text-sm font-medium">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Create a password"
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="confirm-password" className="text-sm font-medium">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm your password"
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!email || !password || !confirmPassword || !name || isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Creating Account...
+                  </div>
+                ) : (
+                  'Create Account'
+                )}
+              </Button>
+
+              <div className="text-center">
+                <Button 
+                  type="button"
+                  variant="link" 
+                  className="text-sm"
+                  onClick={() => setMode('staff')}
+                >
+                  Already have an account? Sign in
                 </Button>
               </div>
             </form>
