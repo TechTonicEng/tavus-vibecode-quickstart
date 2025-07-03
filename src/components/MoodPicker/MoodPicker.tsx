@@ -4,6 +4,32 @@ import { emotions } from '@/data/emotions'
 import { MoodOption } from '@/types'
 import { cn } from '@/lib/utils'
 
+// Import all mood images
+import happyImg from '@/assets/Moods/image.png'
+import sadImg from '@/assets/Moods/image copy.png'
+import scaredImg from '@/assets/Moods/image copy copy.png'
+
+// Create a mapping of mood values to imported images
+const moodImages: Record<string, string> = {
+  happy: happyImg,
+  sad: sadImg,
+  scared: scaredImg,
+  // For now, we'll use the first three images for all moods
+  // You can add more specific mappings as needed
+  worried: sadImg,
+  angry: scaredImg,
+  frustrated: scaredImg,
+  nervous: sadImg,
+  shy: happyImg,
+  curious: happyImg,
+  depressed: sadImg,
+  bored: sadImg,
+  proud: happyImg,
+  hopeful: happyImg,
+  irritated: scaredImg,
+  shocked: scaredImg
+}
+
 interface MoodPickerProps {
   selectedMood: MoodOption | null
   onMoodSelect: (mood: MoodOption) => void
@@ -46,33 +72,35 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
             whileTap={{ scale: 0.95 }}
           >
             <div className="text-center space-y-2">
-              {emotion.image ? (
-                <div className="relative">
-                  <img 
-                    src={emotion.image} 
-                    alt={emotion.label}
-                    className="w-16 h-16 mx-auto object-contain"
-                    onError={(e) => {
-                      console.log(`Failed to load image: ${emotion.image}`)
-                      // Hide the image and show emoji fallback
-                      e.currentTarget.style.display = 'none';
-                      const emojiSpan = e.currentTarget.nextElementSibling as HTMLElement;
-                      if (emojiSpan) {
-                        emojiSpan.style.display = 'block';
-                      }
-                    }}
-                  />
-                  <span 
-                    className="text-4xl hidden" 
-                  >
+              <div className="relative">
+                {moodImages[emotion.value] ? (
+                  <>
+                    <img 
+                      src={moodImages[emotion.value]} 
+                      alt={emotion.label}
+                      className="w-16 h-16 mx-auto object-contain"
+                      onError={(e) => {
+                        console.log(`Failed to load image for ${emotion.value}`)
+                        // Hide the image and show emoji fallback
+                        e.currentTarget.style.display = 'none';
+                        const emojiSpan = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (emojiSpan) {
+                          emojiSpan.style.display = 'block';
+                        }
+                      }}
+                    />
+                    <span 
+                      className="text-4xl hidden" 
+                    >
+                      {emotion.emoji}
+                    </span>
+                  </>
+                ) : (
+                  <div className="text-4xl">
                     {emotion.emoji}
-                  </span>
-                </div>
-              ) : (
-                <div className="text-4xl">
-                  {emotion.emoji}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
               <div className="text-sm font-medium text-gray-900">
                 {emotion.label}
               </div>

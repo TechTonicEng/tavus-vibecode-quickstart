@@ -306,15 +306,7 @@ function App() {
       authState 
     })
 
-    // Use currentStudent or fallback for session creation
-    const studentForSession = currentStudent || {
-      id: 'hardcoded_student_123',
-      name: 'Test Student',
-      grade: 4,
-      class_id: 'test-class',
-      created_at: new Date().toISOString()
-    }
-
+    // SIMPLIFIED VALIDATION - Only check mood and skill
     console.log('App: selectedMood:', selectedMood)
     console.log('App: selectedSkill:', selectedSkill)
 
@@ -325,6 +317,15 @@ function App() {
       console.error('App: selectedSkill:', selectedSkill)
       setAuthError('Please select both a mood and a skill before starting.')
       return
+    }
+
+    // Use currentStudent or fallback for session creation
+    const studentForSession = currentStudent || {
+      id: 'hardcoded_student_123',
+      name: 'Test Student',
+      grade: 4,
+      class_id: 'test-class',
+      created_at: new Date().toISOString()
     }
 
     try {

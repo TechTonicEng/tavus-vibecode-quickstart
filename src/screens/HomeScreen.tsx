@@ -78,8 +78,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
   const handleMoodSelect = (mood: MoodOption) => {
     console.log('HomeScreen: Mood selected:', mood)
     setSelectedMood(mood)
+    console.log('HomeScreen: Mood atom updated, current value:', mood)
     // Auto-advance to skill selection
     setTimeout(() => {
+      console.log('HomeScreen: Auto-advancing to skill selection')
       setStep('skill')
     }, 500)
   }
@@ -87,19 +89,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
   const handleSkillSelect = (skill: SELSkill) => {
     console.log('HomeScreen: Skill selected:', skill)
     setSelectedSkill(skill)
+    console.log('HomeScreen: Skill atom updated, current value:', skill)
     // Auto-advance to ready state
     setTimeout(() => {
+      console.log('HomeScreen: Auto-advancing to ready state')
       setStep('ready')
     }, 500)
   }
 
-  // Check for all required data including effectiveStudent
-  const canStartSession = selectedMood && selectedSkill && effectiveStudent
+  // REMOVED STUDENT REQUIREMENT - Only check for mood and skill
+  const canStartSession = selectedMood && selectedSkill
 
   console.log('HomeScreen: canStartSession check:', {
     hasSelectedMood: !!selectedMood,
     hasSelectedSkill: !!selectedSkill,
-    hasEffectiveStudent: !!effectiveStudent,
     canStartSession
   })
 
@@ -108,23 +111,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
     console.log('HomeScreen: Current state before starting session:', {
       selectedMood,
       selectedSkill,
-      currentStudent,
-      effectiveStudent,
       canStartSession
     })
 
-    // Explicit validation check to prevent session start with missing data
-    if (!selectedMood || !selectedSkill || !effectiveStudent) {
-      console.error('HomeScreen: Cannot start session: missing mood, skill, or student')
+    // SIMPLIFIED VALIDATION - Only check mood and skill
+    if (!selectedMood || !selectedSkill) {
+      console.error('HomeScreen: Cannot start session: missing mood or skill')
       console.error('HomeScreen: Missing data details:', {
         selectedMood: selectedMood ? 'present' : 'missing',
-        selectedSkill: selectedSkill ? 'present' : 'missing',
-        effectiveStudent: effectiveStudent ? 'present' : 'missing'
+        selectedSkill: selectedSkill ? 'present' : 'missing'
       })
       return
     }
     
-    console.log('HomeScreen: All data present, calling onStartSession')
+    console.log('HomeScreen: Mood and skill present, calling onStartSession')
     onStartSession()
   }
 
@@ -241,26 +241,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
                 <div className="text-center space-y-4">
                   <div className="flex items-center justify-center gap-4">
                     <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-                      {selectedMood.image ? (
-                        <img 
-                          src={selectedMood.image} 
-                          alt={selectedMood.label}
-                          className="w-8 h-8 object-contain"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const emojiSpan = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (emojiSpan) {
-                              emojiSpan.style.display = 'inline';
-                            }
-                          }}
-                        />
-                      ) : null}
-                      <span 
-                        className="text-2xl" 
-                        style={{ display: selectedMood.image ? 'none' : 'inline' }}
-                      >
-                        {selectedMood.emoji}
-                      </span>
+                      <span className="text-2xl">{selectedMood.emoji}</span>
                       <span className="font-medium text-primary">{selectedMood.label}</span>
                     </div>
                     <Heart className="w-5 h-5 text-red-500" />
@@ -291,9 +272,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
             <Card className="max-w-2xl mx-auto">
               <CardContent className="p-6 text-center">
                 <p className="text-gray-600 mb-4">
-                  {!effectiveStudent && "Please log in to start a session."}
-                  {!selectedMood && effectiveStudent && "Please select how you're feeling."}
-                  {!selectedSkill && effectiveStudent && selectedMood && "Please choose a skill to practice."}
+                  {!selectedMood && "Please select how you're feeling."}
+                  {!selectedSkill && selectedMood && "Please choose a skill to practice."}
                 </p>
                 <Button
                   onClick={() => setStep('mood')}
