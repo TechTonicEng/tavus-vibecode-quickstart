@@ -1,18 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAtom } from 'jotai'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { selectedMoodAtom, selectedSkillAtom } from '@/store/session'
-import { Sparkles, Star, Heart, Home } from 'lucide-react'
+import { JournalPrompt } from '@/components/Journal/JournalPrompt'
+import { MiniGameCard } from '@/components/Games/MiniGameCard'
+import { selectedMoodAtom, selectedSkillAtom, selectedContextTagAtom } from '@/store/session'
+import { miniGames } from '@/data/miniGames'
+import { Sparkles, Star, Heart, Home, BookOpen, Gamepad2 } from 'lucide-react'
 
 interface SessionCompleteProps {
   onReturnHome: () => void
 }
 
+const journalPrompts = [
+  "What happened today that made you feel this way?",
+  "How did the breathing exercise help you?",
+  "What would you tell a friend who was feeling the same way?",
+  "What could you do differently next time?",
+  "What are you grateful for today?"
+]
+
 export const SessionComplete: React.FC<SessionCompleteProps> = ({ onReturnHome }) => {
   const [selectedMood] = useAtom(selectedMoodAtom)
   const [selectedSkill] = useAtom(selectedSkillAtom)
+  const [selectedContextTag] = useAtom(selectedContextTagAtom)
+  const [showJournal, setShowJournal] = useState(false)
+  const [showGames, setShowGames] = useState(false)
+  const [journalCompleted, setJournalCompleted] = useState(false)
 
   const encouragementMessages = [
     "You did an amazing job today!",
@@ -23,6 +38,66 @@ export const SessionComplete: React.FC<SessionCompleteProps> = ({ onReturnHome }
   ]
 
   const randomMessage = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)]
+  const randomPrompt = journalPrompts[Math.floor(Math.random() * journalPrompts.length)]
+
+  const handleJournalSubmit = (response: string) => {
+    console.log('Journal entry:', response)
+    // Here you would save the journal entry to the database
+    setJournalCompleted(true)
+    setShowJournal(false)
+  }
+
+  const handleJournalSkip = () => {
+    setShowJournal(false)
+  }
+
+  const handleGamePlay = (game: any) => {
+    console.log('Playing game:', game.title)
+    // This would open the selected mini game
+  }
+
+  if (showJournal) {
+    return (
+      <div className="h-full flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 p-6">
+        <div className="max-w-2xl w-full">
+          <JournalPrompt
+            prompt={randomPrompt}
+            onSubmit={handleJournalSubmit}
+            onSkip={handleJournalSkip}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  if (showGames) {
+    return (
+      <div className="h-full overflow-y-auto bg-gradient-to-br from-blue-50 to-green-50 p-6">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">SEL Mini Games</h2>
+            <p className="text-gray-600">Practice your social-emotional skills with fun activities!</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {miniGames.map((game) => (
+              <MiniGameCard
+                key={game.id}
+                game={game}
+                onPlay={handleGamePlay}
+              />
+            ))}
+          </div>
+          
+          <div className="text-center">
+            <Button variant="outline" onClick={() => setShowGames(false)}>
+              Back to Summary
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="h-full flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 p-6">
@@ -72,18 +147,21 @@ export const SessionComplete: React.FC<SessionCompleteProps> = ({ onReturnHome }
                 What we did today:
               </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {selectedMood && (
-                  <div className="p-4 bg-primary/10 rounded-2xl">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-3xl">{selectedMood.emoji}</span>
-                      <div>
-                        <h4 className="font-semibold text-primary">Your Feeling</h4>
-                        <p className="text-sm text-gray-600">{selectedMood.label}</p>
-                      </div>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="p-4 bg-primary/10 rounded-2xl">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-3xl">{selectedMood?.emoji}</span>
+                    <div>
+                      <h4 className="font-semibold text-primary">Your Feeling</h4>
+                      <p className="text-sm text-gray-600">{selectedMood?.label}</p>
+                      {selectedContextTag && (
+                        <p className="text-xs text-gray-500">
+                          {selectedContextTag.emoji} {selectedContextTag.label}
+                        </p>
+                      )}
                     </div>
                   </div>
-                )}
+                </div>
 
                 {selectedSkill && (
                   <div className="p-4 bg-secondary/10 rounded-2xl">
@@ -114,14 +192,34 @@ export const SessionComplete: React.FC<SessionCompleteProps> = ({ onReturnHome }
                 </p>
               </div>
 
-              <Button
-                onClick={onReturnHome}
-                size="lg"
-                className="w-full"
-              >
-                <Home className="w-5 h-5 mr-2" />
-                Return Home
-              </Button>
+              {/* Action Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <Button
+                  onClick={() => setShowJournal(true)}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  {journalCompleted ? 'Journal ✓' : 'Write in Journal'}
+                </Button>
+                
+                <Button
+                  onClick={() => setShowGames(true)}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <Gamepad2 className="w-4 h-4" />
+                  Play Games
+                </Button>
+                
+                <Button
+                  onClick={onReturnHome}
+                  className="flex items-center gap-2"
+                >
+                  <Home className="w-4 h-4" />
+                  Return Home
+                </Button>
+              </div>
             </motion.div>
           </CardContent>
         </Card>
