@@ -17,7 +17,7 @@ interface HomeScreenProps {
 
 // Hardcoded fallback student for testing
 const FALLBACK_STUDENT: Student = {
-  id: 'hardcoded_student_123',
+  id: '550e8400-e29b-41d4-a716-446655440000',
   name: 'Test Student',
   grade: 4,
   class_id: 'test-class',

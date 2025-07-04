@@ -66,7 +66,11 @@ export const Conversation: React.FC = () => {
   useEffect(() => {
     if (remoteParticipantIds.length && !start) {
       setStart(true);
-      setTimeout(() => daily?.setLocalAudio(true), 4000);
+      setTimeout(() => {
+        daily?.setLocalAudio(true);
+        // Attempt to start remote audio playback (required by some browsers)
+        daily?.startAudio?.().catch(() => {});
+      }, 4000);
     }
   }, [remoteParticipantIds, start]);
 
@@ -215,7 +219,9 @@ export const Conversation: React.FC = () => {
             <PhoneIcon className="size-6 rotate-[135deg]" />
           </Button>
         </div>
-        <DailyAudio />
+        {remoteParticipantIds?.length > 0 && (
+          <DailyAudio sessionId={remoteParticipantIds[0]} />
+        )}
       </div>
     </DialogWrapper>
   );

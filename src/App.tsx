@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useAtom } from 'jotai'
-import { DailyProvider } from '@daily-co/daily-react'
 import { LoginScreen } from '@/screens/LoginScreen'
 import { Sidebar } from '@/components/Layout/Sidebar'
 import { HomeScreen } from '@/screens/HomeScreen'
@@ -21,6 +20,8 @@ type AppView = 'home' | 'session' | 'complete' | 'sessions' | 'skills' | 'settin
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('home')
+  // Ensure the setter matches Sidebar’s expected type
+  const handleViewChange = (view: string) => setCurrentView(view as AppView)
   const [authState, setAuthState] = useAtom(authStateAtom)
   const [currentStudent, setCurrentStudent] = useAtom(currentStudentAtom)
   const [currentEducator, setCurrentEducator] = useAtom(currentEducatorAtom)
@@ -189,7 +190,7 @@ function App() {
       console.log('App: Demo student signin')
       
       const demoStudent = {
-        id: 'demo_student_123',
+        id: '550e8400-e29b-41d4-a716-446655440000',
         name: 'Demo Student',
         grade: 4,
         class_id: 'demo-class',
@@ -438,21 +439,21 @@ function App() {
   // Wait for initialization to complete before rendering
   if (!isInitialized) {
     return (
-      <DailyProvider>
+      <>
         <div className="h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
             <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading...</p>
           </div>
         </div>
-      </DailyProvider>
+      </>
     )
   }
 
   // Show login screen if not authenticated
   if (!authState.isAuthenticated) {
     return (
-      <DailyProvider>
+      <>
         <LoginScreen
           onStudentLogin={handleStudentLogin}
           onStudentSignup={handleStudentSignup}
@@ -461,16 +462,16 @@ function App() {
           isLoading={isAuthLoading}
           authError={authError}
         />
-      </DailyProvider>
+      </>
     )
   }
 
   return (
-    <DailyProvider>
+    <>
       <div className="h-screen flex bg-gray-50">
-        <Sidebar 
-          currentView={currentView} 
-          onViewChange={setCurrentView}
+        <Sidebar
+          currentView={currentView}
+          onViewChange={handleViewChange}
           onLogout={handleLogout}
           userType={authState.userType}
           currentUser={currentStudent || currentEducator}
@@ -479,7 +480,7 @@ function App() {
           {renderMainContent()}
         </main>
       </div>
-    </DailyProvider>
+    </>
   )
 }
 
