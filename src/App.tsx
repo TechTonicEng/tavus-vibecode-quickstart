@@ -307,7 +307,7 @@ function App() {
       authState 
     })
 
-    // SIMPLIFIED VALIDATION - Only check mood and skill
+    // Log the current atom values
     console.log('App: selectedMood:', selectedMood)
     console.log('App: selectedSkill:', selectedSkill)
 

@@ -10,6 +10,7 @@ import { screenAtom } from "@/store/screens";
 import { X } from "lucide-react";
 import * as React from "react";
 import { apiTokenAtom } from "@/store/tokens";
+import { Textarea } from "@/components/ui/textarea";
 
 // Button Component
 const Button = React.forwardRef<
@@ -54,24 +55,6 @@ const Input = React.forwardRef<
   );
 });
 Input.displayName = "Input";
-
-// Textarea Component
-const Textarea = React.forwardRef<
-  HTMLTextAreaElement,
-  React.TextareaHTMLAttributes<HTMLTextAreaElement>
->(({ className, ...props }, ref) => {
-  return (
-    <textarea
-      className={cn(
-        "flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      )}
-      ref={ref}
-      {...props}
-    />
-  );
-});
-Textarea.displayName = "Textarea";
 
 // Switch Component
 const Switch = React.forwardRef<
@@ -340,4 +323,4 @@ export const Settings: React.FC = () => {
       </AnimatedTextBlockWrapper>
     </DialogWrapper>
   );
-}; 
+};
