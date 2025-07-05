@@ -31,12 +31,12 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
       </div>
 
       {/* Mood Grid - 3x5 layout with bigger animals */}
-      <div className="grid grid-cols-3 md:grid-cols-5 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8 max-w-7xl mx-auto px-4">
         {emotions.map((emotion) => (
           <motion.button
             key={emotion.value}
             className={cn(
-              "mood-card group relative flex flex-col items-center justify-center p-6 bg-white border-3 border-gray-200 shadow-lg",
+              "mood-card group relative flex flex-col items-center justify-center p-4 sm:p-6 bg-white border-3 border-gray-200 shadow-lg",
               selectedMood?.value === emotion.value
                 ? "selected border-tess-peach bg-gradient-to-br from-tess-peach/20 to-tess-yellow/20 shadow-xl"
                 : "hover:border-tess-peach hover:bg-gradient-to-br hover:from-tess-peach/10 hover:to-tess-yellow/10 hover:shadow-xl"
@@ -49,13 +49,13 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
             transition={{ duration: 0.3 }}
           >
             {/* Character Display */}
-            <div className="relative mb-4">
+            <div className="relative mb-2 sm:mb-4">
               {emotion.image ? (
                 <>
                   <img 
                     src={emotion.image} 
                     alt={emotion.label}
-                    className="w-24 h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 object-contain transition-transform group-hover:scale-110 drop-shadow-lg"
+                    className="w-16 h-16 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 object-contain transition-transform group-hover:scale-110 drop-shadow-lg"
                     onError={(e) => {
                       // Hide the image and show emoji fallback
                       e.currentTarget.style.display = 'none';
@@ -66,13 +66,13 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
                     }}
                   />
                   <span 
-                    className="text-6xl md:text-7xl lg:text-8xl hidden transition-transform group-hover:scale-110" 
+                    className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl hidden transition-transform group-hover:scale-110" 
                   >
                     {emotion.emoji}
                   </span>
                 </>
               ) : (
-                <div className="text-6xl md:text-7xl lg:text-8xl transition-transform group-hover:scale-110">
+                <div className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl transition-transform group-hover:scale-110">
                   {emotion.emoji}
                 </div>
               )}
@@ -80,19 +80,19 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
               {/* Selection indicator */}
               {selectedMood?.value === emotion.value && (
                 <motion.div
-                  className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-tess-peach to-tess-yellow rounded-full flex items-center justify-center shadow-lg border-2 border-white"
+                  className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-tess-peach to-tess-yellow rounded-full flex items-center justify-center shadow-lg border-2 border-white"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
                 >
-                  <span className="text-white text-sm font-bold">✓</span>
+                  <span className="text-white text-xs sm:text-sm font-bold">✓</span>
                 </motion.div>
               )}
             </div>
 
             {/* Label */}
             <div className="text-center">
-              <div className="text-base md:text-lg lg:text-xl font-bold text-tess-text">
+              <div className="text-sm sm:text-base md:text-lg font-bold text-tess-text">
                 {emotion.label}
               </div>
             </div>

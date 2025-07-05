@@ -488,101 +488,47 @@ function App() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-tess-blue to-tess-purple rounded-full flex items-center justify-center">
-                      <span className="text-xl">🫁</span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-tess-text">Deep Breathing</h3>
-                      <span className="text-xs bg-tess-blue/20 text-tess-blue px-2 py-1 rounded-full">Breathing</span>
-                    </div>
+                {/* Skills will be rendered using SkillCard component */}
+                {[
+                  { id: 'deep-breathing', title: 'Deep Breathing', description: 'Learn to calm down with special breathing techniques', category: 'breathing', duration: 120, instructions: [] },
+                  { id: 'mindful-listening', title: 'Mindful Listening', description: 'Listen carefully to sounds around you', category: 'mindfulness', duration: 180, instructions: [] },
+                  { id: 'positive-self-talk', title: 'Positive Self-Talk', description: 'Say kind things to yourself', category: 'reframing', duration: 150, instructions: [] },
+                  { id: 'gratitude-practice', title: 'Gratitude Practice', description: 'Think about good things in your life', category: 'mindfulness', duration: 120, instructions: [] },
+                  { id: 'making-friends', title: 'Making Friends', description: 'Learn how to be a good friend', category: 'social', duration: 200, instructions: [] },
+                  { id: 'belly-breathing', title: 'Belly Breathing', description: 'Use your belly to breathe like a balloon', category: 'breathing', duration: 90, instructions: [] }
+                ].map((skill) => (
+                  <div key={skill.id}>
+                    <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-tess-blue to-tess-purple rounded-full flex items-center justify-center">
+                            <span className="text-xl">
+                              {skill.category === 'breathing' ? '🫁' : 
+                               skill.category === 'mindfulness' ? '🧘' : 
+                               skill.category === 'reframing' ? '💭' : '🤝'}
+                            </span>
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-tess-text">{skill.title}</h3>
+                            <span className="text-xs bg-tess-blue/20 text-tess-blue px-2 py-1 rounded-full">{skill.category}</span>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-gray-400 hover:text-red-500 h-8 w-8"
+                        >
+                          <Heart className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <p className="text-sm text-tess-text-light mb-4">{skill.description}</p>
+                      <Button className="w-full bg-gradient-to-r from-tess-blue to-tess-purple text-white">
+                        <span className="text-xl mr-2">▶</span>
+                        Practice Now
+                      </Button>
+                    </Card>
                   </div>
-                  <p className="text-sm text-tess-text-light mb-4">Learn to calm down with special breathing techniques</p>
-                  <Button className="w-full bg-gradient-to-r from-tess-blue to-tess-purple text-white">
-                    Practice Now
-                  </Button>
-                </Card>
-                
-                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-tess-green to-tess-yellow rounded-full flex items-center justify-center">
-                      <span className="text-xl">🧘</span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-tess-text">Mindful Listening</h3>
-                      <span className="text-xs bg-tess-green/20 text-tess-green px-2 py-1 rounded-full">Mindfulness</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-tess-text-light mb-4">Listen carefully to sounds around you</p>
-                  <Button className="w-full bg-gradient-to-r from-tess-green to-tess-yellow text-white">
-                    Practice Now
-                  </Button>
-                </Card>
-                
-                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-tess-peach to-tess-pink rounded-full flex items-center justify-center">
-                      <span className="text-xl">💭</span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-tess-text">Positive Self-Talk</h3>
-                      <span className="text-xs bg-tess-peach/20 text-tess-peach px-2 py-1 rounded-full">Reframing</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-tess-text-light mb-4">Say kind things to yourself</p>
-                  <Button className="w-full bg-gradient-to-r from-tess-peach to-tess-pink text-white">
-                    Practice Now
-                  </Button>
-                </Card>
-                
-                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-tess-yellow to-tess-orange rounded-full flex items-center justify-center">
-                      <span className="text-xl">🙏</span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-tess-text">Gratitude Practice</h3>
-                      <span className="text-xs bg-tess-yellow/20 text-tess-yellow px-2 py-1 rounded-full">Mindfulness</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-tess-text-light mb-4">Think about good things in your life</p>
-                  <Button className="w-full bg-gradient-to-r from-tess-yellow to-tess-orange text-white">
-                    Practice Now
-                  </Button>
-                </Card>
-                
-                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-tess-purple to-tess-blue rounded-full flex items-center justify-center">
-                      <span className="text-xl">🤝</span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-tess-text">Making Friends</h3>
-                      <span className="text-xs bg-tess-purple/20 text-tess-purple px-2 py-1 rounded-full">Social</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-tess-text-light mb-4">Learn how to be a good friend</p>
-                  <Button className="w-full bg-gradient-to-r from-tess-purple to-tess-blue text-white">
-                    Practice Now
-                  </Button>
-                </Card>
-                
-                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-tess-pink to-tess-peach rounded-full flex items-center justify-center">
-                      <span className="text-xl">🎈</span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-tess-text">Belly Breathing</h3>
-                      <span className="text-xs bg-tess-pink/20 text-tess-pink px-2 py-1 rounded-full">Breathing</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-tess-text-light mb-4">Use your belly to breathe like a balloon</p>
-                  <Button className="w-full bg-gradient-to-r from-tess-pink to-tess-peach text-white">
-                    Practice Now
-                  </Button>
-                </Card>
+                ))}
               </div>
             </div>
           </div>
@@ -608,7 +554,10 @@ function App() {
                     </div>
                   </div>
                   <p className="text-sm text-tess-text-light mb-4">Drag emotions to match the right situations</p>
-                  <Button className="w-full bg-gradient-to-r from-tess-peach to-tess-yellow text-white">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-tess-peach to-tess-yellow text-white"
+                    onClick={() => setCurrentView('match-game')}
+                  >
                     <span className="text-xl mr-2">▶</span>
                     Play Game
                   </Button>
@@ -669,6 +618,8 @@ function App() {
             </div>
           </div>
         )
+      case 'match-game':
+        return <MatchingGameView onExit={() => setCurrentView('games')} />
       case 'profile':
         return (
           <div className="p-6">
@@ -797,6 +748,235 @@ function App() {
         </main>
       </div>
     </>
+  )
+}
+
+// Matching Game Component
+const MatchingGameView: React.FC<{ onExit: () => void }> = ({ onExit }) => {
+  const [gameItems, setGameItems] = useState<Array<{
+    id: string
+    content: string
+    type: 'emotion' | 'situation'
+    matched: boolean
+    pairId: number
+  }>>([])
+  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null)
+  const [score, setScore] = useState(0)
+  const [attempts, setAttempts] = useState(0)
+  const [gameCompleted, setGameCompleted] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(120) // 2 minutes
+
+  const gamePairs = [
+    { emotion: '😊', situation: 'Getting a good grade on a test' },
+    { emotion: '😢', situation: 'Losing your favorite toy' },
+    { emotion: '😠', situation: 'Someone cuts in line' },
+    { emotion: '😰', situation: 'Speaking in front of the class' },
+    { emotion: '😴', situation: 'Staying up too late' },
+    { emotion: '🤗', situation: 'Hugging a friend' }
+  ]
+
+  useEffect(() => {
+    // Initialize game items
+    const items: Array<{
+      id: string
+      content: string
+      type: 'emotion' | 'situation'
+      matched: boolean
+      pairId: number
+    }> = []
+    
+    gamePairs.forEach((pair, index) => {
+      items.push({
+        id: `emotion-${index}`,
+        content: pair.emotion,
+        type: 'emotion',
+        matched: false,
+        pairId: index
+      })
+      items.push({
+        id: `situation-${index}`,
+        content: pair.situation,
+        type: 'situation',
+        matched: false,
+        pairId: index
+      })
+    })
+    
+    // Shuffle situations
+    const emotions = items.filter(item => item.type === 'emotion')
+    const situations = items.filter(item => item.type === 'situation')
+    const shuffledSituations = [...situations].sort(() => Math.random() - 0.5)
+    
+    setGameItems([...emotions, ...shuffledSituations])
+  }, [])
+
+  useEffect(() => {
+    if (timeLeft > 0 && !gameCompleted) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
+      return () => clearTimeout(timer)
+    } else if (timeLeft === 0) {
+      handleGameEnd()
+    }
+  }, [timeLeft, gameCompleted])
+
+  const handleItemClick = (item: any) => {
+    if (item.matched) return
+
+    if (item.type === 'emotion') {
+      setSelectedEmotion(item.id)
+    } else if (item.type === 'situation' && selectedEmotion) {
+      checkMatch(selectedEmotion, item.id)
+    }
+  }
+
+  const checkMatch = (emotionId: string, situationId: string) => {
+    const emotionItem = gameItems.find(item => item.id === emotionId)
+    const situationItem = gameItems.find(item => item.id === situationId)
+    
+    setAttempts(prev => prev + 1)
+
+    if (emotionItem && situationItem && emotionItem.pairId === situationItem.pairId) {
+      // Correct match
+      setGameItems(prev => prev.map(item => 
+        item.id === emotionId || item.id === situationId
+          ? { ...item, matched: true }
+          : item
+      ))
+      setScore(prev => prev + 10)
+      setSelectedEmotion(null)
+
+      // Check if game is completed
+      const newMatchedCount = gameItems.filter(item => item.matched).length + 2
+      if (newMatchedCount === gameItems.length) {
+        setTimeout(() => handleGameEnd(), 500)
+      }
+    } else {
+      // Incorrect match
+      setSelectedEmotion(null)
+    }
+  }
+
+  const handleGameEnd = () => {
+    setGameCompleted(true)
+  }
+
+  const resetGame = () => {
+    setScore(0)
+    setAttempts(0)
+    setGameCompleted(false)
+    setTimeLeft(120)
+    setSelectedEmotion(null)
+    setGameItems(prev => prev.map(item => ({ ...item, matched: false })))
+  }
+
+  if (gameCompleted) {
+    return (
+      <div className="p-6 h-full flex items-center justify-center bg-gradient-to-br from-tess-peach/20 to-tess-yellow/20">
+        <Card className="max-w-2xl mx-auto card-tess">
+          <CardContent className="text-center py-8">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="space-y-4"
+            >
+              <div className="text-6xl">🏆</div>
+              <h2 className="text-2xl font-bold text-gray-900">Great Job!</h2>
+              <p className="text-lg text-gray-600">
+                You scored {score} points in {attempts} attempts!
+              </p>
+              <div className="flex gap-4 justify-center">
+                <Button onClick={resetGame} className="bg-gradient-to-r from-tess-green to-tess-blue text-white">
+                  🔄 Play Again
+                </Button>
+                <Button variant="outline" onClick={onExit}>
+                  🏠 Back to Games
+                </Button>
+              </div>
+            </motion.div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-6 h-full bg-gradient-to-br from-tess-peach/20 to-tess-yellow/20">
+      <Card className="max-w-6xl mx-auto card-tess">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold text-tess-text">🧩 Match the Feeling</CardTitle>
+            <div className="flex items-center gap-4 text-sm">
+              <span className="font-bold text-tess-peach">Score: {score}</span>
+              <span className="font-bold text-tess-blue">Time: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
+            </div>
+          </div>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          <p className="text-center text-gray-600 text-lg">
+            Click an emotion, then click the matching situation!
+          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <h3 className="font-bold text-center text-xl text-tess-text">Emotions</h3>
+              <div className="space-y-3">
+                {gameItems.filter(item => item.type === 'emotion').map((item) => (
+                  <motion.div
+                    key={item.id}
+                    className={cn(
+                      "p-6 border-3 rounded-2xl cursor-pointer text-center transition-all duration-200",
+                      item.matched
+                        ? "bg-gradient-to-r from-tess-green to-tess-blue border-tess-green text-white shadow-lg"
+                        : selectedEmotion === item.id
+                        ? "bg-gradient-to-r from-tess-peach to-tess-yellow border-tess-peach text-white shadow-lg"
+                        : "bg-white border-gray-200 hover:border-tess-peach hover:shadow-md"
+                    )}
+                    onClick={() => handleItemClick(item)}
+                    whileHover={{ scale: item.matched ? 1 : 1.02 }}
+                    whileTap={{ scale: item.matched ? 1 : 0.98 }}
+                  >
+                    <div className="text-5xl mb-2">{item.content}</div>
+                    {item.matched && <div className="text-sm font-bold">✓ Matched!</div>}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-bold text-center text-xl text-tess-text">Situations</h3>
+              <div className="space-y-3">
+                {gameItems.filter(item => item.type === 'situation').map((item) => (
+                  <motion.div
+                    key={item.id}
+                    className={cn(
+                      "p-6 border-3 rounded-2xl cursor-pointer text-center transition-all duration-200",
+                      item.matched
+                        ? "bg-gradient-to-r from-tess-green to-tess-blue border-tess-green text-white shadow-lg"
+                        : selectedEmotion
+                        ? "bg-gray-50 border-gray-300 hover:border-tess-peach hover:bg-white"
+                        : "bg-gray-100 border-gray-200"
+                    )}
+                    onClick={() => handleItemClick(item)}
+                    whileHover={{ scale: item.matched ? 1 : 1.02 }}
+                    whileTap={{ scale: item.matched ? 1 : 0.98 }}
+                  >
+                    <div className="text-base font-medium">{item.content}</div>
+                    {item.matched && <div className="text-sm font-bold mt-2">✓ Matched!</div>}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Button variant="outline" onClick={onExit} className="bg-white">
+              Exit Game
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 

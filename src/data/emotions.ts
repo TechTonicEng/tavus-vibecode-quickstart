@@ -106,19 +106,19 @@ export const emotions: MoodOption[] = [
     image: '/src/assets/Moods/Hopeful-Fawn.png'
   },
   {
-    emoji: '😒',
-    label: 'Irritated',
-    value: 'irritated',
-    color: '#FFB6C1',
-    description: 'Feeling slightly angry or annoyed',
-    image: '/src/assets/Moods/Irritated-Cat.png'
-  },
-  {
     emoji: '😐',
     label: 'Okay',
     value: 'okay',
-    color: '#F0F4F8',
+    color: '#FFB6C1',
     description: 'Feeling neutral or fine',
     image: '/src/assets/Moods/Fine-Koala.png'
+  },
+  {
+    emoji: '😒',
+    label: 'Irritated',
+    value: 'irritated',
+    color: '#F0F4F8',
+    description: 'Feeling slightly angry or annoyed',
+    image: '/src/assets/Moods/Irritated-Cat.png'
   }
 ]

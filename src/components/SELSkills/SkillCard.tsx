@@ -3,13 +3,15 @@ import { motion } from 'framer-motion'
 import { SELSkill } from '@/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Clock, Play } from 'lucide-react'
+import { Clock, Play, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SkillCardProps {
   skill: SELSkill
   onSelect: (skill: SELSkill) => void
   isSelected?: boolean
+  isFavorite?: boolean
+  onToggleFavorite?: (skill: SELSkill) => void
 }
 
 const categoryColors = {
@@ -22,7 +24,9 @@ const categoryColors = {
 export const SkillCard: React.FC<SkillCardProps> = ({
   skill,
   onSelect,
-  isSelected = false
+  isSelected = false,
+  isFavorite = false,
+  onToggleFavorite
 }) => {
   return (
     <motion.div
@@ -35,15 +39,33 @@ export const SkillCard: React.FC<SkillCardProps> = ({
       )}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-900">
-              {skill.title}
-            </CardTitle>
-            <span className={cn(
-              "px-2 py-1 rounded-full text-xs font-medium",
-              categoryColors[skill.category]
-            )}>
-              {skill.category}
-            </span>
+            <div className="flex-1">
+              <CardTitle className="text-lg font-semibold text-gray-900">
+                {skill.title}
+              </CardTitle>
+              <span className={cn(
+                "px-2 py-1 rounded-full text-xs font-medium mt-1 inline-block",
+                categoryColors[skill.category]
+              )}>
+                {skill.category}
+              </span>
+            </div>
+            {onToggleFavorite && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onToggleFavorite(skill)
+                }}
+                className={cn(
+                  "ml-2 h-8 w-8",
+                  isFavorite ? "text-red-500 hover:text-red-600" : "text-gray-400 hover:text-red-500"
+                )}
+              >
+                <Heart className={cn("w-4 h-4", isFavorite && "fill-current")} />
+              </Button>
+            )}
           </div>
           <p className="text-gray-600 text-sm">{skill.description}</p>
         </CardHeader>
@@ -73,7 +95,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
 
           <Button
             onClick={() => onSelect(skill)}
-            className="w-full"
+            className="w-full mt-2"
             variant={isSelected ? "default" : "outline"}
           >
             <Play className="w-4 h-4" />
