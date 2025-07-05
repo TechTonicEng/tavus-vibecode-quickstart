@@ -107,29 +107,25 @@
 
 /* Custom mood picker styles */
 .mood-card {
-  @apply relative overflow-hidden rounded-3xl border-3 transition-all duration-300;
+  @apply relative overflow-hidden rounded-3xl border-3 transition-all duration-300 w-full aspect-square;
   min-height: 120px;
-  min-width: 120px;
 }
 
 @media (min-width: 640px) {
   .mood-card {
     min-height: 160px;
-    min-width: 160px;
   }
 }
 
 @media (min-width: 768px) {
   .mood-card {
     min-height: 180px;
-    min-width: 180px;
   }
 }
 
 @media (min-width: 1024px) {
   .mood-card {
     min-height: 200px;
-    min-width: 200px;
   }
 }
 

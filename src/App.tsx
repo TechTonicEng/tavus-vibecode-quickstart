@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { Target, Heart } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { LoginScreen } from '@/screens/LoginScreen'
 import { Sidebar } from '@/components/Layout/Sidebar'
 import { HomeScreen } from '@/screens/HomeScreen'
 import { SessionView } from '@/components/Session/SessionView'
 import { SessionComplete } from '@/screens/SessionComplete'
+import { SkillCard } from '@/components/SELSkills/SkillCard'
+import { selSkills } from '@/data/selSkills'
 import { 
   authStateAtom, 
   currentStudentAtom, 
@@ -15,6 +17,7 @@ import {
 } from '@/store/auth'
 import { conversationAtom } from '@/store/conversation'
 import { selectedMoodAtom, selectedSkillAtom, currentSessionAtom } from '@/store/session'
+import { favoriteSkillsAtom } from '@/store/session'
 import { createConversation } from '@/api/conversation'
 import { createSession } from '@/api/sessions'
 import { authenticateStudentQR, authenticateStaff } from '@/api/auth'
@@ -32,6 +35,7 @@ function App() {
   const [selectedMood] = useAtom(selectedMoodAtom)
   const [selectedSkill] = useAtom(selectedSkillAtom)
   const [currentSession, setCurrentSession] = useAtom(currentSessionAtom)
+  const [favoriteSkills, setFavoriteSkills] = useAtom(favoriteSkillsAtom)
   const [isAuthLoading, setIsAuthLoading] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -401,6 +405,16 @@ function App() {
     })
   }
 
+  const handleToggleFavorite = (skillId: string) => {
+    setFavoriteSkills(prev => {
+      if (prev.includes(skillId)) {
+        return prev.filter(id => id !== skillId)
+      } else {
+        return [...prev, skillId]
+      }
+    })
+  }
+
   const renderMainContent = () => {
     switch (currentView) {
       case 'home':
@@ -488,46 +502,13 @@ function App() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Skills will be rendered using SkillCard component */}
-                {[
-                  { id: 'deep-breathing', title: 'Deep Breathing', description: 'Learn to calm down with special breathing techniques', category: 'breathing', duration: 120, instructions: [] },
-                  { id: 'mindful-listening', title: 'Mindful Listening', description: 'Listen carefully to sounds around you', category: 'mindfulness', duration: 180, instructions: [] },
-                  { id: 'positive-self-talk', title: 'Positive Self-Talk', description: 'Say kind things to yourself', category: 'reframing', duration: 150, instructions: [] },
-                  { id: 'gratitude-practice', title: 'Gratitude Practice', description: 'Think about good things in your life', category: 'mindfulness', duration: 120, instructions: [] },
-                  { id: 'making-friends', title: 'Making Friends', description: 'Learn how to be a good friend', category: 'social', duration: 200, instructions: [] },
-                  { id: 'belly-breathing', title: 'Belly Breathing', description: 'Use your belly to breathe like a balloon', category: 'breathing', duration: 90, instructions: [] }
-                ].map((skill) => (
-                  <div key={skill.id}>
-                    <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-tess-blue to-tess-purple rounded-full flex items-center justify-center">
-                            <span className="text-xl">
-                              {skill.category === 'breathing' ? '🫁' : 
-                               skill.category === 'mindfulness' ? '🧘' : 
-                               skill.category === 'reframing' ? '💭' : '🤝'}
-                            </span>
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-tess-text">{skill.title}</h3>
-                            <span className="text-xs bg-tess-blue/20 text-tess-blue px-2 py-1 rounded-full">{skill.category}</span>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-gray-400 hover:text-red-500 h-8 w-8"
-                        >
-                          <Heart className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <p className="text-sm text-tess-text-light mb-4">{skill.description}</p>
-                      <Button className="w-full bg-gradient-to-r from-tess-blue to-tess-purple text-white">
-                        <span className="text-xl mr-2">▶</span>
-                        Practice Now
-                      </Button>
-                    </Card>
-                  </div>
+                {selSkills.map((skill) => (
+                  <SkillCard
+                    key={skill.id}
+                    skill={skill}
+                    isFavorite={favoriteSkills.includes(skill.id)}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
                 ))}
               </div>
             </div>
