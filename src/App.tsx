@@ -10,9 +10,11 @@ import { SessionView } from '@/components/Session/SessionView'
 import { SessionComplete } from '@/screens/SessionComplete'
 import { SkillCard } from '@/components/SELSkills/SkillCard'
 import { selSkills } from '@/data/selSkills'
-import { 
-  authStateAtom, 
-  currentStudentAtom, 
+import { miniGames } from '@/data/miniGames'
+import { MatchingGame } from '@/components/Games/MatchingGame'
+import {
+  authStateAtom,
+  currentStudentAtom,
   currentEducatorAtom
 } from '@/store/auth'
 import { conversationAtom } from '@/store/conversation'
@@ -599,8 +601,20 @@ function App() {
             </div>
           </div>
         )
-      case 'match-game':
-        return <MatchingGameView onExit={() => setCurrentView('games')} />
+      case 'match-game': {
+        // Find the "Match the Feeling" game from miniGames
+        const matchGame = miniGames.find(g => g.id === 'match-the-feeling');
+        if (!matchGame) {
+          return <div className="p-6 text-red-600">Error: "Match the Feeling" game not found.</div>;
+        }
+        return (
+          <MatchingGame
+            game={matchGame}
+            onComplete={() => setCurrentView('games')}
+            onExit={() => setCurrentView('games')}
+          />
+        );
+      }
       case 'profile':
         return (
           <div className="p-6">
@@ -733,232 +747,6 @@ function App() {
 }
 
 // Matching Game Component
-const MatchingGameView: React.FC<{ onExit: () => void }> = ({ onExit }) => {
-  const [gameItems, setGameItems] = useState<Array<{
-    id: string
-    content: string
-    type: 'emotion' | 'situation'
-    matched: boolean
-    pairId: number
-  }>>([])
-  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null)
-  const [score, setScore] = useState(0)
-  const [attempts, setAttempts] = useState(0)
-  const [gameCompleted, setGameCompleted] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(120) // 2 minutes
-
-  const gamePairs = [
-    { emotion: '😊', situation: 'Getting a good grade on a test' },
-    { emotion: '😢', situation: 'Losing your favorite toy' },
-    { emotion: '😠', situation: 'Someone cuts in line' },
-    { emotion: '😰', situation: 'Speaking in front of the class' },
-    { emotion: '😴', situation: 'Staying up too late' },
-    { emotion: '🤗', situation: 'Hugging a friend' }
-  ]
-
-  useEffect(() => {
-    // Initialize game items
-    const items: Array<{
-      id: string
-      content: string
-      type: 'emotion' | 'situation'
-      matched: boolean
-      pairId: number
-    }> = []
-    
-    gamePairs.forEach((pair, index) => {
-      items.push({
-        id: `emotion-${index}`,
-        content: pair.emotion,
-        type: 'emotion',
-        matched: false,
-        pairId: index
-      })
-      items.push({
-        id: `situation-${index}`,
-        content: pair.situation,
-        type: 'situation',
-        matched: false,
-        pairId: index
-      })
-    })
-    
-    // Shuffle situations
-    const emotions = items.filter(item => item.type === 'emotion')
-    const situations = items.filter(item => item.type === 'situation')
-    const shuffledSituations = [...situations].sort(() => Math.random() - 0.5)
-    
-    setGameItems([...emotions, ...shuffledSituations])
-  }, [])
-
-  useEffect(() => {
-    if (timeLeft > 0 && !gameCompleted) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-      return () => clearTimeout(timer)
-    } else if (timeLeft === 0) {
-      handleGameEnd()
-    }
-  }, [timeLeft, gameCompleted])
-
-  const handleItemClick = (item: any) => {
-    if (item.matched) return
-
-    if (item.type === 'emotion') {
-      setSelectedEmotion(item.id)
-    } else if (item.type === 'situation' && selectedEmotion) {
-      checkMatch(selectedEmotion, item.id)
-    }
-  }
-
-  const checkMatch = (emotionId: string, situationId: string) => {
-    const emotionItem = gameItems.find(item => item.id === emotionId)
-    const situationItem = gameItems.find(item => item.id === situationId)
-    
-    setAttempts(prev => prev + 1)
-
-    if (emotionItem && situationItem && emotionItem.pairId === situationItem.pairId) {
-      // Correct match
-      setGameItems(prev => prev.map(item => 
-        item.id === emotionId || item.id === situationId
-          ? { ...item, matched: true }
-          : item
-      ))
-      setScore(prev => prev + 10)
-      setSelectedEmotion(null)
-
-      // Check if game is completed
-      const newMatchedCount = gameItems.filter(item => item.matched).length + 2
-      if (newMatchedCount === gameItems.length) {
-        setTimeout(() => handleGameEnd(), 500)
-      }
-    } else {
-      // Incorrect match
-      setSelectedEmotion(null)
-    }
-  }
-
-  const handleGameEnd = () => {
-    setGameCompleted(true)
-  }
-
-  const resetGame = () => {
-    setScore(0)
-    setAttempts(0)
-    setGameCompleted(false)
-    setTimeLeft(120)
-    setSelectedEmotion(null)
-    setGameItems(prev => prev.map(item => ({ ...item, matched: false })))
-  }
-
-  if (gameCompleted) {
-    return (
-      <div className="p-6 h-full flex items-center justify-center bg-gradient-to-br from-tess-peach/20 to-tess-yellow/20">
-        <Card className="max-w-2xl mx-auto card-tess">
-          <CardContent className="text-center py-8">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="space-y-4"
-            >
-              <div className="text-6xl">🏆</div>
-              <h2 className="text-2xl font-bold text-gray-900">Great Job!</h2>
-              <p className="text-lg text-gray-600">
-                You scored {score} points in {attempts} attempts!
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Button onClick={resetGame} className="bg-gradient-to-r from-tess-green to-tess-blue text-white">
-                  🔄 Play Again
-                </Button>
-                <Button variant="outline" onClick={onExit}>
-                  🏠 Back to Games
-                </Button>
-              </div>
-            </motion.div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
-  return (
-    <div className="p-6 h-full bg-gradient-to-br from-tess-peach/20 to-tess-yellow/20">
-      <Card className="max-w-6xl mx-auto card-tess">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-bold text-tess-text">🧩 Match the Feeling</CardTitle>
-            <div className="flex items-center gap-4 text-sm">
-              <span className="font-bold text-tess-peach">Score: {score}</span>
-              <span className="font-bold text-tess-blue">Time: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
-            </div>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-6">
-          <p className="text-center text-gray-600 text-lg">
-            Click an emotion, then click the matching situation!
-          </p>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h3 className="font-bold text-center text-xl text-tess-text">Emotions</h3>
-              <div className="space-y-3">
-                {gameItems.filter(item => item.type === 'emotion').map((item) => (
-                  <motion.div
-                    key={item.id}
-                    className={cn(
-                      "p-6 border-3 rounded-2xl cursor-pointer text-center transition-all duration-200",
-                      item.matched
-                        ? "bg-gradient-to-r from-tess-green to-tess-blue border-tess-green text-white shadow-lg"
-                        : selectedEmotion === item.id
-                        ? "bg-gradient-to-r from-tess-peach to-tess-yellow border-tess-peach text-white shadow-lg"
-                        : "bg-white border-gray-200 hover:border-tess-peach hover:shadow-md"
-                    )}
-                    onClick={() => handleItemClick(item)}
-                    whileHover={{ scale: item.matched ? 1 : 1.02 }}
-                    whileTap={{ scale: item.matched ? 1 : 0.98 }}
-                  >
-                    <div className="text-5xl mb-2">{item.content}</div>
-                    {item.matched && <div className="text-sm font-bold">✓ Matched!</div>}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-bold text-center text-xl text-tess-text">Situations</h3>
-              <div className="space-y-3">
-                {gameItems.filter(item => item.type === 'situation').map((item) => (
-                  <motion.div
-                    key={item.id}
-                    className={cn(
-                      "p-6 border-3 rounded-2xl cursor-pointer text-center transition-all duration-200",
-                      item.matched
-                        ? "bg-gradient-to-r from-tess-green to-tess-blue border-tess-green text-white shadow-lg"
-                        : selectedEmotion
-                        ? "bg-gray-50 border-gray-300 hover:border-tess-peach hover:bg-white"
-                        : "bg-gray-100 border-gray-200"
-                    )}
-                    onClick={() => handleItemClick(item)}
-                    whileHover={{ scale: item.matched ? 1 : 1.02 }}
-                    whileTap={{ scale: item.matched ? 1 : 0.98 }}
-                  >
-                    <div className="text-base font-medium">{item.content}</div>
-                    {item.matched && <div className="text-sm font-bold mt-2">✓ Matched!</div>}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <Button variant="outline" onClick={onExit} className="bg-white">
-              Exit Game
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
+// (Removed local MatchingGameView in favor of shared MatchingGame component)
 
 export default App
