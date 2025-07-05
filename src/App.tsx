@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useAtom } from 'jotai'
+import { Target, Heart } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { LoginScreen } from '@/screens/LoginScreen'
 import { Sidebar } from '@/components/Layout/Sidebar'
 import { HomeScreen } from '@/screens/HomeScreen'
