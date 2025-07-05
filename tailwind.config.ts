@@ -48,13 +48,15 @@ export default {
           foreground: "#2C2C2C",
         },
         // Custom TESS colors
-        'tess-peach': '#FCE3C1',
-        'tess-blue': '#A3D5FF',
-        'tess-yellow': '#FFE99E',
-        'tess-green': '#C4F4B5',
-        'tess-pink': '#FFB6C1',
-        'tess-gray': '#F0F4F8',
-        'tess-bg': '#FAF6F1',
+        'tess-peach': '#FF9A8B',
+        'tess-blue': '#6FA8DC',
+        'tess-yellow': '#FFD93D',
+        'tess-green': '#6BCF7F',
+        'tess-pink': '#FF6B9D',
+        'tess-purple': '#A8E6CF',
+        'tess-orange': '#FFB347',
+        'tess-gray': '#F5F7FA',
+        'tess-bg': '#FEFEFE',
         'tess-text': '#2C2C2C',
         'tess-text-light': '#7A7A7A',
       },
@@ -65,10 +67,14 @@ export default {
         '2xl': '1rem',
         '3xl': '1.5rem',
       },
+      borderWidth: {
+        '3': '3px',
+      },
       animation: {
         "float": "float 3s ease-in-out infinite",
         "bounce-gentle": "bounce-gentle 0.6s ease-out",
         "glow": "glow 2s ease-in-out infinite alternate",
+        "scale-108": "scale-108 0.2s ease-out",
       },
       keyframes: {
         "bounce-gentle": {
@@ -76,13 +82,18 @@ export default {
           "50%": { transform: "scale(1.05)" },
         },
         "glow": {
-          "0%": { boxShadow: "0 0 5px rgba(252, 227, 193, 0.5)" },
-          "100%": { boxShadow: "0 0 20px rgba(252, 227, 193, 0.8)" },
+          "0%": { boxShadow: "0 0 20px rgba(255, 154, 139, 0.4)" },
+          "100%": { boxShadow: "0 0 40px rgba(255, 154, 139, 0.8)" },
+        },
+        "scale-108": {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(1.08)" },
         },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-warm': 'linear-gradient(135deg, #FAF6F1 0%, #F0F4F8 100%)',
+        'gradient-warm': 'linear-gradient(135deg, #FEFEFE 0%, #F5F7FA 50%, #E8F4FD 100%)',
+        'gradient-vibrant': 'linear-gradient(135deg, #FF9A8B 0%, #6FA8DC 50%, #6BCF7F 100%)',
       },
       spacing: {
         '18': '4.5rem',

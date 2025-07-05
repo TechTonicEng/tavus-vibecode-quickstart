@@ -400,29 +400,339 @@ function App() {
       case 'sessions':
         return (
           <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">My Sessions</h1>
-            <p className="text-gray-600">Your session history will appear here.</p>
+            <div className="max-w-6xl mx-auto space-y-6">
+              <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold text-tess-text mb-2">My Sessions</h1>
+                <p className="text-lg text-tess-text-light">Track your emotional journey and progress</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Recent Sessions */}
+                <Card className="card-tess p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-tess-peach to-tess-yellow rounded-full flex items-center justify-center">
+                      <span className="text-2xl">😊</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Today's Session</h3>
+                      <p className="text-sm text-tess-text-light">Happy • Deep Breathing</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light">Duration: 5 minutes</p>
+                </Card>
+                
+                <Card className="card-tess p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-tess-blue to-tess-purple rounded-full flex items-center justify-center">
+                      <span className="text-2xl">😟</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Yesterday</h3>
+                      <p className="text-sm text-tess-text-light">Worried • Mindful Listening</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light">Duration: 7 minutes</p>
+                </Card>
+                
+                <Card className="card-tess p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-tess-green to-tess-yellow rounded-full flex items-center justify-center">
+                      <span className="text-2xl">😌</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">2 days ago</h3>
+                      <p className="text-sm text-tess-text-light">Proud • Gratitude Practice</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light">Duration: 4 minutes</p>
+                </Card>
+              </div>
+              
+              <Card className="card-tess p-6">
+                <h2 className="text-2xl font-bold text-tess-text mb-4">Weekly Progress</h2>
+                <div className="grid grid-cols-7 gap-2">
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
+                    <div key={day} className="text-center">
+                      <p className="text-sm text-tess-text-light mb-2">{day}</p>
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                        index < 3 ? 'bg-gradient-to-br from-tess-green to-tess-blue' : 'bg-tess-gray'
+                      }`}>
+                        {index < 3 ? '✓' : ''}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
           </div>
         )
       case 'skills':
         return (
           <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">SEL Skills Library</h1>
-            <p className="text-gray-600">Browse all available skills here.</p>
+            <div className="max-w-6xl mx-auto space-y-6">
+              <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold text-tess-text mb-2">SEL Skills Library</h1>
+                <p className="text-lg text-tess-text-light">Discover and practice emotional skills</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-tess-blue to-tess-purple rounded-full flex items-center justify-center">
+                      <span className="text-xl">🫁</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Deep Breathing</h3>
+                      <span className="text-xs bg-tess-blue/20 text-tess-blue px-2 py-1 rounded-full">Breathing</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light mb-4">Learn to calm down with special breathing techniques</p>
+                  <Button className="w-full bg-gradient-to-r from-tess-blue to-tess-purple text-white">
+                    Practice Now
+                  </Button>
+                </Card>
+                
+                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-tess-green to-tess-yellow rounded-full flex items-center justify-center">
+                      <span className="text-xl">🧘</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Mindful Listening</h3>
+                      <span className="text-xs bg-tess-green/20 text-tess-green px-2 py-1 rounded-full">Mindfulness</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light mb-4">Listen carefully to sounds around you</p>
+                  <Button className="w-full bg-gradient-to-r from-tess-green to-tess-yellow text-white">
+                    Practice Now
+                  </Button>
+                </Card>
+                
+                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-tess-peach to-tess-pink rounded-full flex items-center justify-center">
+                      <span className="text-xl">💭</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Positive Self-Talk</h3>
+                      <span className="text-xs bg-tess-peach/20 text-tess-peach px-2 py-1 rounded-full">Reframing</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light mb-4">Say kind things to yourself</p>
+                  <Button className="w-full bg-gradient-to-r from-tess-peach to-tess-pink text-white">
+                    Practice Now
+                  </Button>
+                </Card>
+                
+                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-tess-yellow to-tess-orange rounded-full flex items-center justify-center">
+                      <span className="text-xl">🙏</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Gratitude Practice</h3>
+                      <span className="text-xs bg-tess-yellow/20 text-tess-yellow px-2 py-1 rounded-full">Mindfulness</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light mb-4">Think about good things in your life</p>
+                  <Button className="w-full bg-gradient-to-r from-tess-yellow to-tess-orange text-white">
+                    Practice Now
+                  </Button>
+                </Card>
+                
+                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-tess-purple to-tess-blue rounded-full flex items-center justify-center">
+                      <span className="text-xl">🤝</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Making Friends</h3>
+                      <span className="text-xs bg-tess-purple/20 text-tess-purple px-2 py-1 rounded-full">Social</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light mb-4">Learn how to be a good friend</p>
+                  <Button className="w-full bg-gradient-to-r from-tess-purple to-tess-blue text-white">
+                    Practice Now
+                  </Button>
+                </Card>
+                
+                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-tess-pink to-tess-peach rounded-full flex items-center justify-center">
+                      <span className="text-xl">🎈</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Belly Breathing</h3>
+                      <span className="text-xs bg-tess-pink/20 text-tess-pink px-2 py-1 rounded-full">Breathing</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light mb-4">Use your belly to breathe like a balloon</p>
+                  <Button className="w-full bg-gradient-to-r from-tess-pink to-tess-peach text-white">
+                    Practice Now
+                  </Button>
+                </Card>
+              </div>
+            </div>
           </div>
         )
-      case 'settings':
+      case 'games':
         return (
           <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Settings</h1>
-            <p className="text-gray-600">Adjust your preferences here.</p>
+            <div className="max-w-6xl mx-auto space-y-6">
+              <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold text-tess-text mb-2">SEL Mini-Games</h1>
+                <p className="text-lg text-tess-text-light">Fun games to practice emotional skills</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-tess-peach to-tess-yellow rounded-2xl flex items-center justify-center">
+                      <span className="text-2xl">🧩</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Match the Feeling</h3>
+                      <span className="text-xs bg-tess-peach/20 text-tess-peach px-2 py-1 rounded-full">Easy • 2 min</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light mb-4">Drag emotions to match the right situations</p>
+                  <Button className="w-full bg-gradient-to-r from-tess-peach to-tess-yellow text-white">
+                    <span className="text-xl mr-2">▶</span>
+                    Play Game
+                  </Button>
+                </Card>
+                
+                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-tess-blue to-tess-purple rounded-2xl flex items-center justify-center">
+                      <span className="text-2xl">🎭</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">What Would You Do?</h3>
+                      <span className="text-xs bg-tess-blue/20 text-tess-blue px-2 py-1 rounded-full">Medium • 3 min</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light mb-4">Choose the best response to different situations</p>
+                  <Button className="w-full bg-gradient-to-r from-tess-blue to-tess-purple text-white">
+                    <span className="text-xl mr-2">▶</span>
+                    Play Game
+                  </Button>
+                </Card>
+                
+                <Card className="card-tess p-6 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-tess-green to-tess-yellow rounded-2xl flex items-center justify-center">
+                      <span className="text-2xl">🕵️</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-tess-text">Emotion Detective</h3>
+                      <span className="text-xs bg-tess-green/20 text-tess-green px-2 py-1 rounded-full">Easy • 2.5 min</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-tess-text-light mb-4">Identify emotions from facial expressions</p>
+                  <Button className="w-full bg-gradient-to-r from-tess-green to-tess-yellow text-white">
+                    <span className="text-xl mr-2">▶</span>
+                    Play Game
+                  </Button>
+                </Card>
+              </div>
+              
+              <Card className="card-tess p-6">
+                <h2 className="text-2xl font-bold text-tess-text mb-4">Your Game Progress</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-gradient-to-br from-tess-peach/10 to-tess-yellow/10 rounded-2xl">
+                    <div className="text-3xl font-bold text-tess-peach">12</div>
+                    <p className="text-sm text-tess-text-light">Games Played</p>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-tess-blue/10 to-tess-purple/10 rounded-2xl">
+                    <div className="text-3xl font-bold text-tess-blue">85%</div>
+                    <p className="text-sm text-tess-text-light">Average Score</p>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-tess-green/10 to-tess-yellow/10 rounded-2xl">
+                    <div className="text-3xl font-bold text-tess-green">7</div>
+                    <p className="text-sm text-tess-text-light">Day Streak</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
         )
       case 'profile':
         return (
           <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">My Profile</h1>
-            <p className="text-gray-600">View your profile information here.</p>
+            <div className="max-w-4xl mx-auto space-y-6">
+              <div className="text-center mb-8">
+                <div className="w-24 h-24 bg-gradient-to-br from-tess-peach to-tess-yellow rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <span className="text-4xl font-bold text-white">{effectiveStudent?.name?.charAt(0) || 'S'}</span>
+                </div>
+                <h1 className="text-4xl font-bold text-tess-text mb-2">{effectiveStudent?.name || 'Student'}</h1>
+                <p className="text-lg text-tess-text-light">Grade {effectiveStudent?.grade || 4} • Class {effectiveStudent?.class_id || 'demo-class'}</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="card-tess p-6">
+                  <h2 className="text-2xl font-bold text-tess-text mb-4 flex items-center gap-2">
+                    <Target className="w-6 h-6 text-tess-peach" />
+                    Current Goal
+                  </h2>
+                  <div className="p-4 bg-gradient-to-br from-tess-peach/10 to-tess-yellow/10 rounded-2xl">
+                    <h3 className="font-bold text-tess-text mb-2">Stay calm when frustrated</h3>
+                    <p className="text-sm text-tess-text-light mb-4">Practice breathing and counting when things don't go my way</p>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-tess-gray rounded-full h-2">
+                        <div className="bg-gradient-to-r from-tess-peach to-tess-yellow h-2 rounded-full" style={{width: '60%'}}></div>
+                      </div>
+                      <span className="text-sm font-bold text-tess-peach">4/7 days</span>
+                    </div>
+                  </div>
+                </Card>
+                
+                <Card className="card-tess p-6">
+                  <h2 className="text-2xl font-bold text-tess-text mb-4 flex items-center gap-2">
+                    <Heart className="w-6 h-6 text-tess-pink" />
+                    My Toolbox
+                  </h2>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-gradient-to-br from-tess-blue/10 to-tess-purple/10 rounded-xl">
+                      <span className="text-xl">🫁</span>
+                      <div>
+                        <h4 className="font-bold text-tess-text">Deep Breathing</h4>
+                        <p className="text-xs text-tess-text-light">Used 5 times</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-gradient-to-br from-tess-green/10 to-tess-yellow/10 rounded-xl">
+                      <span className="text-xl">🧘</span>
+                      <div>
+                        <h4 className="font-bold text-tess-text">Mindful Listening</h4>
+                        <p className="text-xs text-tess-text-light">Used 3 times</p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+              
+              <Card className="card-tess p-6">
+                <h2 className="text-2xl font-bold text-tess-text mb-4">My Achievements</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center p-4 bg-gradient-to-br from-tess-yellow/20 to-tess-orange/20 rounded-2xl">
+                    <div className="text-3xl mb-2">🏆</div>
+                    <p className="text-sm font-bold text-tess-text">First Session</p>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-tess-green/20 to-tess-blue/20 rounded-2xl">
+                    <div className="text-3xl mb-2">🔥</div>
+                    <p className="text-sm font-bold text-tess-text">7 Day Streak</p>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-tess-peach/20 to-tess-pink/20 rounded-2xl">
+                    <div className="text-3xl mb-2">⭐</div>
+                    <p className="text-sm font-bold text-tess-text">Skill Master</p>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-tess-purple/20 to-tess-blue/20 rounded-2xl">
+                    <div className="text-3xl mb-2">🎮</div>
+                    <p className="text-sm font-bold text-tess-text">Game Champion</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
         )
       default:

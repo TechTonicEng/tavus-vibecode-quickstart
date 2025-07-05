@@ -30,32 +30,32 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
         </p>
       </div>
 
-      {/* Mood Grid - 3x5 layout */}
-      <div className="grid grid-cols-3 md:grid-cols-5 gap-6 max-w-4xl mx-auto">
+      {/* Mood Grid - 3x5 layout with bigger animals */}
+      <div className="grid grid-cols-3 md:grid-cols-5 gap-8 max-w-6xl mx-auto">
         {emotions.map((emotion) => (
           <motion.button
             key={emotion.value}
             className={cn(
-              "mood-card group relative flex flex-col items-center justify-center p-4 bg-white border-2 border-gray-100",
+              "mood-card group relative flex flex-col items-center justify-center p-6 bg-white border-3 border-gray-200 shadow-lg",
               selectedMood?.value === emotion.value
-                ? "selected border-tess-peach bg-tess-peach/10"
-                : "hover:border-tess-peach/50 hover:bg-tess-peach/5"
+                ? "selected border-tess-peach bg-gradient-to-br from-tess-peach/20 to-tess-yellow/20 shadow-xl"
+                : "hover:border-tess-peach hover:bg-gradient-to-br hover:from-tess-peach/10 hover:to-tess-yellow/10 hover:shadow-xl"
             )}
             onClick={() => handleMoodSelect(emotion)}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
             {/* Character Display */}
-            <div className="relative mb-3">
+            <div className="relative mb-4">
               {emotion.image ? (
                 <>
                   <img 
                     src={emotion.image} 
                     alt={emotion.label}
-                    className="w-16 h-16 md:w-20 md:h-20 object-contain transition-transform group-hover:scale-110"
+                    className="w-24 h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 object-contain transition-transform group-hover:scale-110 drop-shadow-lg"
                     onError={(e) => {
                       // Hide the image and show emoji fallback
                       e.currentTarget.style.display = 'none';
@@ -66,13 +66,13 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
                     }}
                   />
                   <span 
-                    className="text-4xl md:text-5xl hidden transition-transform group-hover:scale-110" 
+                    className="text-6xl md:text-7xl lg:text-8xl hidden transition-transform group-hover:scale-110" 
                   >
                     {emotion.emoji}
                   </span>
                 </>
               ) : (
-                <div className="text-4xl md:text-5xl transition-transform group-hover:scale-110">
+                <div className="text-6xl md:text-7xl lg:text-8xl transition-transform group-hover:scale-110">
                   {emotion.emoji}
                 </div>
               )}
@@ -80,7 +80,7 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
               {/* Selection indicator */}
               {selectedMood?.value === emotion.value && (
                 <motion.div
-                  className="absolute -top-2 -right-2 w-6 h-6 bg-tess-peach rounded-full flex items-center justify-center shadow-md"
+                  className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-tess-peach to-tess-yellow rounded-full flex items-center justify-center shadow-lg border-2 border-white"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -92,7 +92,7 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({
 
             {/* Label */}
             <div className="text-center">
-              <div className="text-sm md:text-base font-semibold text-tess-text">
+              <div className="text-base md:text-lg lg:text-xl font-bold text-tess-text">
                 {emotion.label}
               </div>
             </div>

@@ -107,23 +107,25 @@
 
 /* Custom mood picker styles */
 .mood-card {
-  @apply relative overflow-hidden rounded-3xl border-2 transition-all duration-300;
-  min-height: 120px;
-  min-width: 120px;
+  @apply relative overflow-hidden rounded-3xl border-3 transition-all duration-300;
+  min-height: 180px;
+  min-width: 180px;
 }
 
 .mood-card:hover {
-  @apply scale-105 shadow-lg;
+  @apply scale-108 shadow-2xl;
 }
 
 .mood-card.selected {
-  @apply border-tess-peach bg-tess-peach/20 shadow-xl;
-  animation: glow 2s ease-in-out infinite alternate;
+  @apply border-tess-peach shadow-2xl;
+  background: linear-gradient(135deg, rgba(252, 227, 193, 0.3), rgba(255, 233, 158, 0.3));
+  animation: glow 3s ease-in-out infinite alternate;
 }
 
 .mood-card.selected::after {
   content: '';
-  @apply absolute inset-0 bg-tess-peach/10 rounded-3xl;
+  @apply absolute inset-0 rounded-3xl;
+  background: linear-gradient(135deg, rgba(252, 227, 193, 0.1), rgba(255, 233, 158, 0.1));
 }
 
 /* Custom button styles */

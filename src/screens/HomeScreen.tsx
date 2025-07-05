@@ -369,40 +369,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartSession }) => {
             />
 
             {/* Mini Games */}
-            <Card className="card-tess">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-tess-text">
-                  <Gamepad2 className="w-5 h-5 text-tess-peach" />
-                  SEL Games
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {miniGames.slice(0, 2).map((game) => (
-                  <div key={game.id} className="p-3 bg-tess-gray rounded-2xl">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-tess-text">{game.title}</h4>
-                        <p className="text-sm text-tess-text-light">{game.description}</p>
-                      </div>
-                      <Button
-                        size="sm"
-                        onClick={() => handleMiniGamePlay(game)}
-                        className="btn-tess-secondary"
-                      >
-                        Play
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                <Button
-                  variant="outline"
-                  className="w-full bg-white border-tess-gray text-tess-text hover:bg-tess-gray"
-                  onClick={() => setShowMiniGames(true)}
-                >
-                  View All Games
-                </Button>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

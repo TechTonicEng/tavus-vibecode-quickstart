@@ -8,11 +8,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-tess-peach text-tess-text hover:bg-tess-peach/80 hover:scale-105 shadow-lg",
-        secondary: "bg-tess-blue text-tess-text hover:bg-tess-blue/80 hover:scale-105 shadow-md",
-        outline: "border-2 border-tess-gray bg-white text-tess-text hover:bg-tess-gray hover:scale-105",
-        ghost: "hover:bg-tess-gray hover:text-tess-text hover:scale-105",
-        destructive: "bg-tess-pink text-tess-text hover:bg-tess-pink/80 hover:scale-105 shadow-lg",
+        default: "bg-gradient-to-r from-tess-peach to-tess-yellow text-white hover:from-tess-peach/90 hover:to-tess-yellow/90 hover:scale-105 shadow-lg font-bold",
+        secondary: "bg-gradient-to-r from-tess-blue to-tess-purple text-white hover:from-tess-blue/90 hover:to-tess-purple/90 hover:scale-105 shadow-lg font-bold",
+        outline: "border-2 border-tess-peach bg-white text-tess-peach hover:bg-tess-peach hover:text-white hover:scale-105 font-bold",
+        ghost: "hover:bg-gradient-to-r hover:from-tess-peach/20 hover:to-tess-yellow/20 hover:text-tess-text hover:scale-105",
+        destructive: "bg-gradient-to-r from-tess-pink to-tess-peach text-white hover:from-tess-pink/90 hover:to-tess-peach/90 hover:scale-105 shadow-lg font-bold",
       },
       size: {
         default: "h-12 px-6 py-3",

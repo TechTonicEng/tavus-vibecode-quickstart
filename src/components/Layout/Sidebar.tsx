@@ -66,11 +66,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-tess-peach to-tess-blue flex items-center justify-center shadow-md">
             <img 
-              src="/logo.png" 
+              src="/images/logo.png" 
               alt="TESS Logo" 
               className="w-8 h-8"
               onError={(e) => {
-                // Fallback to text if image fails to load
                 e.currentTarget.style.display = 'none'
                 const parent = e.currentTarget.parentElement
                 if (parent) {
