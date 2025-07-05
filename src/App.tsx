@@ -36,6 +36,15 @@ function App() {
   const [authError, setAuthError] = useState<string | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
 
+  // Define effectiveStudent for use throughout the component
+  const effectiveStudent = currentStudent || {
+    id: 'demo-student',
+    name: 'Demo Student',
+    grade: 4,
+    class_id: 'demo-class',
+    created_at: new Date().toISOString()
+  }
+
   // Debug logging for currentStudent changes
   useEffect(() => {
     console.log('App: currentStudent atom changed:', currentStudent)
