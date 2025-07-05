@@ -113,7 +113,7 @@
 }
 
 .mood-card:hover {
-  @apply scale-108 shadow-2xl;
+  @apply animate-scale-108 shadow-2xl;
 }
 
 .mood-card.selected {
