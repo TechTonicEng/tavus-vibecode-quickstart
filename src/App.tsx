@@ -430,12 +430,6 @@ function App() {
     }
   }
 
-  // Debug: Log current state
-  console.log('App render - Auth State:', authState)
-  console.log('App render - Current Student:', currentStudent)
-  console.log('App render - Current Educator:', currentEducator)
-  console.log('App render - Is Initialized:', isInitialized)
-
   // Wait for initialization to complete before rendering
   if (!isInitialized) {
     return (
@@ -468,7 +462,7 @@ function App() {
 
   return (
     <>
-      <div className="h-screen flex bg-gray-50">
+      <div className="h-screen flex bg-tess-bg">
         <Sidebar
           currentView={currentView}
           onViewChange={handleViewChange}

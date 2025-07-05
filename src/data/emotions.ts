@@ -5,7 +5,7 @@ export const emotions: MoodOption[] = [
     emoji: '😊',
     label: 'Happy',
     value: 'happy',
-    color: '#FFD93D',
+    color: '#FFE99E',
     description: 'Feeling joyful and cheerful',
     image: '/src/assets/Moods/Happy-Rabbit.png'
   },
@@ -13,7 +13,7 @@ export const emotions: MoodOption[] = [
     emoji: '😢',
     label: 'Sad',
     value: 'sad',
-    color: '#6BB6FF',
+    color: '#A3D5FF',
     description: 'Feeling down or upset',
     image: '/src/assets/Moods/Sad-Puppy.png'
   },
@@ -21,7 +21,7 @@ export const emotions: MoodOption[] = [
     emoji: '😨',
     label: 'Scared',
     value: 'scared',
-    color: '#FF6B6B',
+    color: '#C4F4B5',
     description: 'Feeling frightened or afraid',
     image: '/src/assets/Moods/Scared-Mouse.png'
   },
@@ -29,7 +29,7 @@ export const emotions: MoodOption[] = [
     emoji: '😟',
     label: 'Worried',
     value: 'worried',
-    color: '#4ECDC4',
+    color: '#A3D5FF',
     description: 'Feeling anxious or concerned',
     image: '/src/assets/Moods/Worried-Squirrel.png'
   },
@@ -37,7 +37,7 @@ export const emotions: MoodOption[] = [
     emoji: '😠',
     label: 'Angry',
     value: 'angry',
-    color: '#FF8E53',
+    color: '#FFB6C1',
     description: 'Feeling mad or frustrated',
     image: '/src/assets/Moods/Angry-Moose.png'
   },
@@ -45,7 +45,7 @@ export const emotions: MoodOption[] = [
     emoji: '😤',
     label: 'Frustrated',
     value: 'frustrated',
-    color: '#FF6B9D',
+    color: '#FFB6C1',
     description: 'Feeling annoyed or impatient',
     image: '/src/assets/Moods/Frustrated-Fox.png'
   },
@@ -53,7 +53,7 @@ export const emotions: MoodOption[] = [
     emoji: '😰',
     label: 'Nervous',
     value: 'nervous',
-    color: '#C7CEEA',
+    color: '#DDA0DD',
     description: 'Feeling jittery or uneasy',
     image: '/src/assets/Moods/Overwhelmed-Lemur.png'
   },
@@ -61,7 +61,7 @@ export const emotions: MoodOption[] = [
     emoji: '😳',
     label: 'Shy',
     value: 'shy',
-    color: '#FFB347',
+    color: '#FFE99E',
     description: 'Feeling timid or bashful',
     image: '/src/assets/Moods/Shy-Turtle.png'
   },
@@ -69,7 +69,7 @@ export const emotions: MoodOption[] = [
     emoji: '🤔',
     label: 'Curious',
     value: 'curious',
-    color: '#98D8C8',
+    color: '#C4F4B5',
     description: 'Feeling interested and wondering',
     image: '/src/assets/Moods/Curious-Giraffe.png'
   },
@@ -77,7 +77,7 @@ export const emotions: MoodOption[] = [
     emoji: '😞',
     label: 'Depressed',
     value: 'depressed',
-    color: '#95A5A6',
+    color: '#A3D5FF',
     description: 'Feeling very sad for a long time',
     image: '/src/assets/Moods/Depressed-Penguin.png'
   },
@@ -85,7 +85,7 @@ export const emotions: MoodOption[] = [
     emoji: '😑',
     label: 'Bored',
     value: 'bored',
-    color: '#BDC3C7',
+    color: '#F0F4F8',
     description: 'Feeling uninterested or restless',
     image: '/src/assets/Moods/Bored-Panda.png'
   },
@@ -93,7 +93,7 @@ export const emotions: MoodOption[] = [
     emoji: '😌',
     label: 'Proud',
     value: 'proud',
-    color: '#F39C12',
+    color: '#FFE99E',
     description: 'Feeling accomplished and confident',
     image: '/src/assets/Moods/Proud-Lion Cub.png'
   },
@@ -101,7 +101,7 @@ export const emotions: MoodOption[] = [
     emoji: '🙂',
     label: 'Hopeful',
     value: 'hopeful',
-    color: '#2ECC71',
+    color: '#C4F4B5',
     description: 'Feeling optimistic about the future',
     image: '/src/assets/Moods/Hopeful-Fawn.png'
   },
@@ -109,16 +109,16 @@ export const emotions: MoodOption[] = [
     emoji: '😒',
     label: 'Irritated',
     value: 'irritated',
-    color: '#E74C3C',
+    color: '#FFB6C1',
     description: 'Feeling slightly angry or annoyed',
-    image: '/src/assets/Moods/Okay.Fine-Koala.png'
+    image: '/src/assets/Moods/Irritated-Cat.png'
   },
   {
-    emoji: '😲',
-    label: 'Shocked',
-    value: 'shocked',
-    color: '#9B59B6',
-    description: 'Feeling very surprised',
-    image: '/src/assets/Moods/Overwhelmed-Lemur.png'
+    emoji: '😐',
+    label: 'Okay',
+    value: 'okay',
+    color: '#F0F4F8',
+    description: 'Feeling neutral or fine',
+    image: '/src/assets/Moods/Fine-Koala.png'
   }
 ]
